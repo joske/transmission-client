@@ -3,6 +3,8 @@ name = "transmission-client"
 version = "0.1.0"
 authors = ["Felix Häcker <haeckerfelix@gnome.org>"]
 edition = "2018"
+description = "WIP"
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
