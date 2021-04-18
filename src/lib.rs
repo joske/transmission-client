@@ -3,9 +3,8 @@ extern crate log;
 #[macro_use]
 extern crate serde_derive;
 
-pub mod rpc;
-
 mod client;
+mod rpc;
 mod session;
 mod session_stats;
 mod torrent;
