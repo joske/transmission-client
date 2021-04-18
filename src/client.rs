@@ -4,7 +4,7 @@ use url::Url;
 use std::cell::RefCell;
 
 use crate::rpc::{RpcRequest, RpcResponse};
-use crate::Session;
+use crate::{Session, SessionStats};
 
 #[derive(Debug, Clone)]
 pub struct Client {
@@ -14,11 +14,19 @@ pub struct Client {
 }
 
 impl Client {
-    pub async fn get_session(&self) -> Result<Session, Error> {
+    pub async fn session(&self) -> Result<Session, Error> {
         debug!("Send");
 
         let result = self.send_request("session-get").await?;
         let response: RpcResponse<Session> = serde_json::from_str(&result).unwrap();
+        Ok(response.arguments)
+    }
+
+    pub async fn session_stats(&self) -> Result<SessionStats, Error> {
+        debug!("Send");
+
+        let result = self.send_request("session-stats").await?;
+        let response: RpcResponse<SessionStats> = serde_json::from_str(&result).unwrap();
         Ok(response.arguments)
     }
 
