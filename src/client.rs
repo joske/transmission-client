@@ -3,8 +3,9 @@ use url::Url;
 
 use std::cell::RefCell;
 
-use crate::rpc::{RpcRequest, RpcResponse};
-use crate::{Session, SessionStats};
+use crate::rpc::{RequestArgs, RpcRequest, RpcResponse, TorrentGetArgs};
+use crate::utils;
+use crate::{Session, SessionStats, Torrent, Torrents};
 
 #[derive(Debug, Clone)]
 pub struct Client {
@@ -14,25 +15,40 @@ pub struct Client {
 }
 
 impl Client {
+    pub async fn all_torrents(&self) -> Result<Vec<Torrent>, Error> {
+        let mut torrent_get_args = TorrentGetArgs::default();
+        torrent_get_args.fields = utils::torrent_fields();
+        let args = Some(RequestArgs::TorrentGetArgs(torrent_get_args));
+
+        let result = self.send_request("torrent-get", args).await?;
+        let response: RpcResponse<Torrents> = serde_json::from_str(&result).unwrap();
+        Ok(response.arguments.torrents)
+    }
+
     pub async fn session(&self) -> Result<Session, Error> {
-        let result = self.send_request("session-get").await?;
+        let result = self.send_request("session-get", None).await?;
         let response: RpcResponse<Session> = serde_json::from_str(&result).unwrap();
         Ok(response.arguments)
     }
 
     pub async fn session_stats(&self) -> Result<SessionStats, Error> {
-        let result = self.send_request("session-stats").await?;
+        let result = self.send_request("session-stats", None).await?;
         let response: RpcResponse<SessionStats> = serde_json::from_str(&result).unwrap();
         Ok(response.arguments)
     }
 
-    async fn send_request(&self, method: &str) -> Result<String, Error> {
+    async fn send_request(
+        &self,
+        method: &str,
+        arguments: Option<RequestArgs>,
+    ) -> Result<String, Error> {
         let request = RpcRequest {
             method: method.into(),
-            ..Default::default()
+            arguments,
         };
 
         let body = serde_json::to_string(&request).unwrap();
+        println!("{}", &body);
         self.send_post(body).await
     }
 
