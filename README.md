@@ -5,7 +5,8 @@ Rust wrapper for [Transmission rpc spec](https://github.com/transmission/transmi
 ### Implemented method names
 
 #### Torrent
-- [ ] torrent-start-now
+- [x] torrent-start
+- [x] torrent-start-now
 - [ ] torrent-stop
 - [ ] torrent-verify
 - [ ] torrent-reannounce

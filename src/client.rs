@@ -3,7 +3,9 @@ use url::Url;
 
 use std::cell::RefCell;
 
-use crate::rpc::{RequestArgs, RpcRequest, RpcResponse, TorrentGetArgs};
+use crate::rpc::{
+    DefaultResponseArgs, RequestArgs, RpcRequest, RpcResponse, TorrentActionArgs, TorrentGetArgs,
+};
 use crate::utils;
 use crate::{Session, SessionStats, Torrent, Torrents};
 
@@ -16,14 +18,34 @@ pub struct Client {
 
 impl Client {
     pub async fn torrents(&self, ids: Option<Vec<i64>>) -> Result<Vec<Torrent>, Error> {
-        let mut torrent_get_args = TorrentGetArgs::default();
-        torrent_get_args.fields = utils::torrent_fields();
-        torrent_get_args.ids = ids;
-        let args = Some(RequestArgs::TorrentGetArgs(torrent_get_args));
+        let mut args = TorrentGetArgs::default();
+        args.fields = utils::torrent_fields();
+        args.ids = ids;
+        let request_args = Some(RequestArgs::TorrentGetArgs(args));
 
-        let result = self.send_request("torrent-get", args).await?;
+        let result = self.send_request("torrent-get", request_args).await?;
         let response: RpcResponse<Torrents> = serde_json::from_str(&result).unwrap();
         Ok(response.arguments.torrents)
+    }
+
+    pub async fn start_torrent(
+        &self,
+        ids: Option<Vec<i64>>,
+        bypass_queue: bool,
+    ) -> Result<(), Error> {
+        let mut args = TorrentActionArgs::default();
+        args.ids = ids;
+        let request_args = Some(RequestArgs::TorrentActionArgs(args));
+
+        let method_name = if bypass_queue {
+            "torrent-start-now"
+        } else {
+            "torrent-start"
+        };
+
+        let result = self.send_request(method_name, request_args).await?;
+        let response: RpcResponse<DefaultResponseArgs> = serde_json::from_str(&result).unwrap();
+        Ok(())
     }
 
     pub async fn session(&self) -> Result<Session, Error> {

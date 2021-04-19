@@ -5,3 +5,8 @@ pub struct RpcResponse<T: RpcResponseArguments> {
 }
 
 pub trait RpcResponseArguments {}
+
+/// Default response argument when no real value gets returned (eg. torrent-start method)
+#[derive(Deserialize, Debug)]
+pub struct DefaultResponseArgs(String);
+impl RpcResponseArguments for DefaultResponseArgs {}
