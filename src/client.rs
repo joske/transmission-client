@@ -15,28 +15,12 @@ pub struct Client {
 }
 
 impl Client {
-    pub async fn torrents(&self) -> Result<Vec<Torrent>, Error> {
+    pub async fn torrents(&self, ids: Option<Vec<i64>>) -> Result<Vec<Torrent>, Error> {
         let mut torrent_get_args = TorrentGetArgs::default();
         torrent_get_args.fields = utils::torrent_fields();
-        self.torrent_request(torrent_get_args).await
-    }
+        torrent_get_args.ids = ids;
+        let args = Some(RequestArgs::TorrentGetArgs(torrent_get_args));
 
-    pub async fn torrent_by_id(&self, id: i64) -> Result<Vec<Torrent>, Error> {
-        let mut torrent_get_args = TorrentGetArgs::default();
-        torrent_get_args.fields = utils::torrent_fields();
-        torrent_get_args.ids = Some(vec![id]);
-        self.torrent_request(torrent_get_args).await
-    }
-
-    pub async fn torrents_by_ids(&self, ids: Vec<i64>) -> Result<Vec<Torrent>, Error> {
-        let mut torrent_get_args = TorrentGetArgs::default();
-        torrent_get_args.fields = utils::torrent_fields();
-        torrent_get_args.ids = Some(ids);
-        self.torrent_request(torrent_get_args).await
-    }
-
-    async fn torrent_request(&self, get_args: TorrentGetArgs) -> Result<Vec<Torrent>, Error> {
-        let args = Some(RequestArgs::TorrentGetArgs(get_args));
         let result = self.send_request("torrent-get", args).await?;
         let response: RpcResponse<Torrents> = serde_json::from_str(&result).unwrap();
         Ok(response.arguments.torrents)
