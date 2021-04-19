@@ -49,6 +49,35 @@ impl Client {
         Ok(())
     }
 
+    pub async fn stop_torrent(&self, ids: Option<Vec<i64>>) -> Result<(), ClientError> {
+        let mut args = TorrentActionArgs::default();
+        args.ids = ids;
+        let request_args = Some(RequestArgs::TorrentActionArgs(args));
+
+        let _: RpcResponse<String> = self.send_request("torrent-stop", request_args).await?;
+        Ok(())
+    }
+
+    pub async fn verify_torrent(&self, ids: Option<Vec<i64>>) -> Result<(), ClientError> {
+        let mut args = TorrentActionArgs::default();
+        args.ids = ids;
+        let request_args = Some(RequestArgs::TorrentActionArgs(args));
+
+        let _: RpcResponse<String> = self.send_request("torrent-verify", request_args).await?;
+        Ok(())
+    }
+
+    pub async fn reannounce_torrent(&self, ids: Option<Vec<i64>>) -> Result<(), ClientError> {
+        let mut args = TorrentActionArgs::default();
+        args.ids = ids;
+        let request_args = Some(RequestArgs::TorrentActionArgs(args));
+
+        let _: RpcResponse<String> = self
+            .send_request("torrent-reannounce", request_args)
+            .await?;
+        Ok(())
+    }
+
     pub async fn session(&self) -> Result<Session, ClientError> {
         let response: RpcResponse<Session> = self.send_request("session-get", None).await?;
         Ok(response.arguments.unwrap())
