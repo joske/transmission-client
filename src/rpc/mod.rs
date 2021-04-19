@@ -4,4 +4,4 @@ mod response;
 
 pub use arguments::{RequestArgs, TorrentActionArgs, TorrentGetArgs};
 pub use request::RpcRequest;
-pub use response::{DefaultResponseArgs, RpcResponse, RpcResponseArguments};
+pub use response::{RpcResponse, RpcResponseArguments};

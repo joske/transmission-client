@@ -1,10 +1,12 @@
-use isahc::{prelude::*, Error, HttpClient, Request};
+use isahc::{prelude::*, HttpClient, Request};
+use serde::de::DeserializeOwned;
 use url::Url;
 
 use std::cell::RefCell;
 
+use crate::error::ClientError;
 use crate::rpc::{
-    DefaultResponseArgs, RequestArgs, RpcRequest, RpcResponse, TorrentActionArgs, TorrentGetArgs,
+    RequestArgs, RpcRequest, RpcResponse, RpcResponseArguments, TorrentActionArgs, TorrentGetArgs,
 };
 use crate::utils;
 use crate::{Session, SessionStats, Torrent, Torrents};
@@ -17,22 +19,22 @@ pub struct Client {
 }
 
 impl Client {
-    pub async fn torrents(&self, ids: Option<Vec<i64>>) -> Result<Vec<Torrent>, Error> {
+    pub async fn torrents(&self, ids: Option<Vec<i64>>) -> Result<Vec<Torrent>, ClientError> {
         let mut args = TorrentGetArgs::default();
         args.fields = utils::torrent_fields();
         args.ids = ids;
         let request_args = Some(RequestArgs::TorrentGetArgs(args));
 
-        let result = self.send_request("torrent-get", request_args).await?;
-        let response: RpcResponse<Torrents> = serde_json::from_str(&result).unwrap();
-        Ok(response.arguments.torrents)
+        let response: RpcResponse<Torrents> =
+            self.send_request("torrent-get", request_args).await?;
+        Ok(response.arguments.unwrap().torrents)
     }
 
     pub async fn start_torrent(
         &self,
         ids: Option<Vec<i64>>,
         bypass_queue: bool,
-    ) -> Result<(), Error> {
+    ) -> Result<(), ClientError> {
         let mut args = TorrentActionArgs::default();
         args.ids = ids;
         let request_args = Some(RequestArgs::TorrentActionArgs(args));
@@ -43,39 +45,42 @@ impl Client {
             "torrent-start"
         };
 
-        let result = self.send_request(method_name, request_args).await?;
-        let response: RpcResponse<DefaultResponseArgs> = serde_json::from_str(&result).unwrap();
+        let _: RpcResponse<String> = self.send_request(method_name, request_args).await?;
         Ok(())
     }
 
-    pub async fn session(&self) -> Result<Session, Error> {
-        let result = self.send_request("session-get", None).await?;
-        let response: RpcResponse<Session> = serde_json::from_str(&result).unwrap();
-        Ok(response.arguments)
+    pub async fn session(&self) -> Result<Session, ClientError> {
+        let response: RpcResponse<Session> = self.send_request("session-get", None).await?;
+        Ok(response.arguments.unwrap())
     }
 
-    pub async fn session_stats(&self) -> Result<SessionStats, Error> {
-        let result = self.send_request("session-stats", None).await?;
-        let response: RpcResponse<SessionStats> = serde_json::from_str(&result).unwrap();
-        Ok(response.arguments)
+    pub async fn session_stats(&self) -> Result<SessionStats, ClientError> {
+        let response: RpcResponse<SessionStats> = self.send_request("session-stats", None).await?;
+        Ok(response.arguments.unwrap())
     }
 
-    async fn send_request(
+    async fn send_request<T: RpcResponseArguments + DeserializeOwned>(
         &self,
         method: &str,
         arguments: Option<RequestArgs>,
-    ) -> Result<String, Error> {
+    ) -> Result<RpcResponse<T>, ClientError> {
         let request = RpcRequest {
             method: method.into(),
             arguments,
         };
 
-        let body = serde_json::to_string(&request).unwrap();
-        println!("{}", &body);
-        self.send_post(body).await
+        let body = serde_json::to_string(&request)?;
+        let result = self.send_post(body).await?;
+        let response: RpcResponse<T> = serde_json::from_str(&result)?;
+
+        if response.result != "success" {
+            return Err(ClientError::TransmissionError(response.result));
+        }
+
+        Ok(response)
     }
 
-    async fn send_post(&self, body: String) -> Result<String, Error> {
+    async fn send_post(&self, body: String) -> Result<String, ClientError> {
         let request = self.http_request(body.clone())?;
         let mut response = self.http_client.send_async(request).await?;
 
@@ -95,7 +100,7 @@ impl Client {
         Ok(response.text().await.unwrap())
     }
 
-    fn http_request(&self, body: String) -> Result<Request<String>, Error> {
+    fn http_request(&self, body: String) -> Result<Request<String>, ClientError> {
         let session_id = self.session_id.borrow().clone();
         let request = Request::post(self.address.to_string())
             .header("X-Transmission-Session-Id", session_id)
