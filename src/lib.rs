@@ -17,4 +17,4 @@ pub use session::Session;
 pub use session_stats::{SessionStats, StatsDetails};
 pub use torrent::Torrent;
 
-use torrent::Torrents;
+use torrent::{TorrentAdded, Torrents};

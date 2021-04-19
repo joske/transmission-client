@@ -1,7 +1,8 @@
 use crate::rpc::RpcResponseArguments;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 #[serde(rename_all = "camelCase")]
+#[serde(default)]
 pub struct Torrent {
     pub activity_date: i64,
     pub added_date: i64,
@@ -38,7 +39,7 @@ pub struct Torrent {
     pub magnet_link: String,
     pub manual_announce_time: i64,
     pub max_connected_peers: i64,
-    pub metadata_percent_complete: i64,
+    pub metadata_percent_complete: f64,
     pub name: String,
     #[serde(rename = "peer-limit")]
     pub peer_limit: i64,
@@ -57,12 +58,12 @@ pub struct Torrent {
     pub queue_position: i64,
     pub rate_download: i64,
     pub rate_upload: i64,
-    pub recheck_progress: i64,
+    pub recheck_progress: f64,
     pub seconds_downloading: i64,
     pub seconds_seeding: i64,
     pub seed_idle_limit: i64,
     pub seed_idle_mode: i64,
-    pub seed_ratio_limit: i64,
+    pub seed_ratio_limit: f64,
     pub seed_ratio_mode: i64,
     pub size_when_done: i64,
     pub start_date: i64,
@@ -73,7 +74,7 @@ pub struct Torrent {
     // TODO: pub trackers: Vec<Tracker>,
     pub upload_limit: i64,
     pub upload_limited: bool,
-    pub upload_ratio: i64,
+    pub upload_ratio: f64,
     pub uploaded_ever: i64,
     pub wanted: Vec<i64>,
     // TODO: pub webseeds: Vec<Option<serde_json::Value>>,
@@ -85,5 +86,13 @@ pub struct Torrents {
     pub torrents: Vec<Torrent>,
 }
 
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "kebab-case")]
+pub struct TorrentAdded {
+    pub torrent_added: Option<Torrent>,
+    pub torrent_duplicate: Option<Torrent>,
+}
+
 impl RpcResponseArguments for Torrent {}
 impl RpcResponseArguments for Torrents {}
+impl RpcResponseArguments for TorrentAdded {}

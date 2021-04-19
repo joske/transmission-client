@@ -1,4 +1,5 @@
 use serde::de::DeserializeOwned;
+use serde::de::Error;
 use serde::{Deserialize, Deserializer};
 use serde_json::Value;
 
@@ -19,5 +20,14 @@ where
     T: Deserialize<'de>,
 {
     let v = Value::deserialize(deserializer)?;
-    Ok(T::deserialize(v).ok())
+    match v {
+        Value::Object(ref obj) => {
+            if obj.is_empty() {
+                Ok(None)
+            } else {
+                T::deserialize(v).map(Some).map_err(Error::custom)
+            }
+        }
+        _ => T::deserialize(v).map(Some).map_err(Error::custom),
+    }
 }

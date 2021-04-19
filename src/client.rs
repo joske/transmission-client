@@ -6,11 +6,11 @@ use std::cell::RefCell;
 
 use crate::error::ClientError;
 use crate::rpc::{
-    RequestArgs, RpcRequest, RpcResponse, RpcResponseArguments, TorrentActionArgs, TorrentGetArgs,
-    TorrentRemoveArgs,
+    RequestArgs, RpcRequest, RpcResponse, RpcResponseArguments, TorrentActionArgs, TorrentAddArgs,
+    TorrentGetArgs, TorrentRemoveArgs,
 };
 use crate::utils;
-use crate::{Session, SessionStats, Torrent, Torrents};
+use crate::{Session, SessionStats, Torrent, TorrentAdded, Torrents};
 
 #[derive(Debug, Clone)]
 pub struct Client {
@@ -77,6 +77,22 @@ impl Client {
             .send_request("torrent-reannounce", request_args)
             .await?;
         Ok(())
+    }
+
+    pub async fn torrent_add(&self, filename: &str) -> Result<Option<Torrent>, ClientError> {
+        let mut args = TorrentAddArgs::default();
+        args.filename = Some(filename.into());
+        let request_args = Some(RequestArgs::TorrentAddArgs(args));
+
+        let response: RpcResponse<TorrentAdded> =
+            self.send_request("torrent-add", request_args).await?;
+
+        let result_args = response.arguments.unwrap();
+        if result_args.torrent_added.is_some() {
+            Ok(result_args.torrent_added)
+        } else {
+            Ok(result_args.torrent_duplicate)
+        }
     }
 
     pub async fn torrent_remove(
@@ -148,7 +164,7 @@ impl Client {
         let session_id = self.session_id.borrow().clone();
         let request = Request::post(self.address.to_string())
             .header("X-Transmission-Session-Id", session_id)
-            .body(body.clone())?;
+            .body(body)?;
 
         Ok(request)
     }
