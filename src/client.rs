@@ -30,7 +30,7 @@ impl Client {
         Ok(response.arguments.unwrap().torrents)
     }
 
-    pub async fn start_torrent(
+    pub async fn torrent_start(
         &self,
         ids: Option<Vec<i64>>,
         bypass_queue: bool,
@@ -49,7 +49,7 @@ impl Client {
         Ok(())
     }
 
-    pub async fn stop_torrent(&self, ids: Option<Vec<i64>>) -> Result<(), ClientError> {
+    pub async fn torrent_stop(&self, ids: Option<Vec<i64>>) -> Result<(), ClientError> {
         let mut args = TorrentActionArgs::default();
         args.ids = ids;
         let request_args = Some(RequestArgs::TorrentActionArgs(args));
@@ -58,7 +58,7 @@ impl Client {
         Ok(())
     }
 
-    pub async fn verify_torrent(&self, ids: Option<Vec<i64>>) -> Result<(), ClientError> {
+    pub async fn torrent_verify(&self, ids: Option<Vec<i64>>) -> Result<(), ClientError> {
         let mut args = TorrentActionArgs::default();
         args.ids = ids;
         let request_args = Some(RequestArgs::TorrentActionArgs(args));
@@ -67,7 +67,7 @@ impl Client {
         Ok(())
     }
 
-    pub async fn reannounce_torrent(&self, ids: Option<Vec<i64>>) -> Result<(), ClientError> {
+    pub async fn torrent_reannounce(&self, ids: Option<Vec<i64>>) -> Result<(), ClientError> {
         let mut args = TorrentActionArgs::default();
         args.ids = ids;
         let request_args = Some(RequestArgs::TorrentActionArgs(args));
