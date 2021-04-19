@@ -13,7 +13,7 @@ Rust wrapper for [Transmission rpc spec](https://github.com/transmission/transmi
 - [ ] torrent-set
 - [x] torrent-get
 - [ ] torrent-add
-- [ ] torrent-remove
+- [x] torrent-remove
 - [ ] torrent-set-location
 - [ ] torrent-rename-path
 

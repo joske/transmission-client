@@ -7,6 +7,7 @@ use std::cell::RefCell;
 use crate::error::ClientError;
 use crate::rpc::{
     RequestArgs, RpcRequest, RpcResponse, RpcResponseArguments, TorrentActionArgs, TorrentGetArgs,
+    TorrentRemoveArgs,
 };
 use crate::utils;
 use crate::{Session, SessionStats, Torrent, Torrents};
@@ -75,6 +76,20 @@ impl Client {
         let _: RpcResponse<String> = self
             .send_request("torrent-reannounce", request_args)
             .await?;
+        Ok(())
+    }
+
+    pub async fn torrent_remove(
+        &self,
+        ids: Option<Vec<i64>>,
+        delete_local_data: bool,
+    ) -> Result<(), ClientError> {
+        let mut args = TorrentRemoveArgs::default();
+        args.delete_local_data = delete_local_data;
+        args.ids = ids;
+        let request_args = Some(RequestArgs::TorrentRemoveArgs(args));
+
+        let _: RpcResponse<String> = self.send_request("torrent-remove", request_args).await?;
         Ok(())
     }
 
