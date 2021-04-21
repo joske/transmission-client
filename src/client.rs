@@ -137,6 +137,11 @@ impl Client {
         Ok(response.arguments.unwrap())
     }
 
+    pub async fn session_close(&self) -> Result<(), ClientError> {
+        let _: RpcResponse<String> = self.send_request("session-close", None).await?;
+        Ok(())
+    }
+
     async fn send_request<T: RpcResponseArguments + DeserializeOwned>(
         &self,
         method: &str,

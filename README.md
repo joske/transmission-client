@@ -31,5 +31,5 @@ Rust wrapper for [Transmission rpc spec](https://github.com/transmission/transmi
 #### Miscellaneous stuff
 - [ ] blocklist-update
 - [ ] port-test
-- [ ] session-close
+- [x] session-close
 - [ ] free-space
