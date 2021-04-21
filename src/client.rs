@@ -7,7 +7,7 @@ use std::cell::RefCell;
 use crate::error::ClientError;
 use crate::rpc::{
     RequestArgs, RpcRequest, RpcResponse, RpcResponseArguments, TorrentActionArgs, TorrentAddArgs,
-    TorrentGetArgs, TorrentRemoveArgs,
+    TorrentGetArgs, TorrentRemoveArgs, TorrentSetLocationArgs,
 };
 use crate::utils;
 use crate::{Session, SessionStats, Torrent, TorrentAdded, Torrents};
@@ -29,6 +29,36 @@ impl Client {
         let response: RpcResponse<Torrents> =
             self.send_request("torrent-get", request_args).await?;
         Ok(response.arguments.unwrap().torrents)
+    }
+
+    pub async fn torrent_add(&self, filename: &str) -> Result<Option<Torrent>, ClientError> {
+        let mut args = TorrentAddArgs::default();
+        args.filename = Some(filename.into());
+        let request_args = Some(RequestArgs::TorrentAddArgs(args));
+
+        let response: RpcResponse<TorrentAdded> =
+            self.send_request("torrent-add", request_args).await?;
+
+        let result_args = response.arguments.unwrap();
+        if result_args.torrent_added.is_some() {
+            Ok(result_args.torrent_added)
+        } else {
+            Ok(result_args.torrent_duplicate)
+        }
+    }
+
+    pub async fn torrent_remove(
+        &self,
+        ids: Option<Vec<i64>>,
+        delete_local_data: bool,
+    ) -> Result<(), ClientError> {
+        let mut args = TorrentRemoveArgs::default();
+        args.delete_local_data = delete_local_data;
+        args.ids = ids;
+        let request_args = Some(RequestArgs::TorrentRemoveArgs(args));
+
+        let _: RpcResponse<String> = self.send_request("torrent-remove", request_args).await?;
+        Ok(())
     }
 
     pub async fn torrent_start(
@@ -79,33 +109,21 @@ impl Client {
         Ok(())
     }
 
-    pub async fn torrent_add(&self, filename: &str) -> Result<Option<Torrent>, ClientError> {
-        let mut args = TorrentAddArgs::default();
-        args.filename = Some(filename.into());
-        let request_args = Some(RequestArgs::TorrentAddArgs(args));
-
-        let response: RpcResponse<TorrentAdded> =
-            self.send_request("torrent-add", request_args).await?;
-
-        let result_args = response.arguments.unwrap();
-        if result_args.torrent_added.is_some() {
-            Ok(result_args.torrent_added)
-        } else {
-            Ok(result_args.torrent_duplicate)
-        }
-    }
-
-    pub async fn torrent_remove(
+    pub async fn torrent_set_location(
         &self,
         ids: Option<Vec<i64>>,
-        delete_local_data: bool,
+        location: String,
+        move_data: bool,
     ) -> Result<(), ClientError> {
-        let mut args = TorrentRemoveArgs::default();
-        args.delete_local_data = delete_local_data;
+        let mut args = TorrentSetLocationArgs::default();
         args.ids = ids;
-        let request_args = Some(RequestArgs::TorrentRemoveArgs(args));
+        args.location = location;
+        args.move_data = move_data;
+        let request_args = Some(RequestArgs::TorrentSetLocationArgs(args));
 
-        let _: RpcResponse<String> = self.send_request("torrent-remove", request_args).await?;
+        let _: RpcResponse<String> = self
+            .send_request("torrent-set-location", request_args)
+            .await?;
         Ok(())
     }
 

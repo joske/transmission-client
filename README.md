@@ -14,7 +14,7 @@ Rust wrapper for [Transmission rpc spec](https://github.com/transmission/transmi
 - [x] torrent-get
 - [x] torrent-add
 - [x] torrent-remove
-- [ ] torrent-set-location
+- [x] torrent-set-location
 - [ ] torrent-rename-path
 
 #### Queue

@@ -8,20 +8,15 @@ pub struct RpcRequest {
 #[serde(untagged)]
 pub enum RequestArgs {
     TorrentGetArgs(TorrentGetArgs),
-    TorrentActionArgs(TorrentActionArgs),
     TorrentAddArgs(TorrentAddArgs),
     TorrentRemoveArgs(TorrentRemoveArgs),
+    TorrentActionArgs(TorrentActionArgs),
+    TorrentSetLocationArgs(TorrentSetLocationArgs),
 }
 
 #[derive(Serialize, Debug, Clone, Default)]
 pub struct TorrentGetArgs {
     pub fields: Vec<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub ids: Option<Vec<i64>>,
-}
-
-#[derive(Serialize, Debug, Clone, Default)]
-pub struct TorrentActionArgs {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ids: Option<Vec<i64>>,
 }
@@ -60,6 +55,22 @@ pub struct TorrentAddArgs {
 #[serde(rename_all = "kebab-case")]
 pub struct TorrentRemoveArgs {
     pub delete_local_data: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ids: Option<Vec<i64>>,
+}
+
+#[derive(Serialize, Debug, Clone, Default)]
+pub struct TorrentActionArgs {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ids: Option<Vec<i64>>,
+}
+
+#[derive(Serialize, Debug, Clone, Default)]
+#[serde(rename_all = "kebab-case")]
+pub struct TorrentSetLocationArgs {
+    #[serde(rename = "move")]
+    pub move_data: bool,
+    pub location: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ids: Option<Vec<i64>>,
 }

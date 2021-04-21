@@ -2,6 +2,7 @@ mod request;
 mod response;
 
 pub use request::{
-    RpcRequest, RequestArgs, TorrentActionArgs, TorrentAddArgs, TorrentGetArgs, TorrentRemoveArgs,
+    RequestArgs, RpcRequest, TorrentActionArgs, TorrentAddArgs, TorrentGetArgs, TorrentRemoveArgs,
+    TorrentSetLocationArgs,
 };
 pub use response::{RpcResponse, RpcResponseArguments};
