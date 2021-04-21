@@ -1,6 +1,6 @@
 # transmission-client
 
-Rust wrapper for [Transmission rpc spec](https://github.com/transmission/transmission/blob/master/extras/rpc-spec.txt).
+Rust wrapper for [Transmission rpc specs](https://github.com/transmission/transmission/blob/master/extras/rpc-spec.txt).
 
 ### Implemented method names
 
