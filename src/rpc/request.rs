@@ -18,7 +18,7 @@ pub enum RequestArgs {
 pub struct TorrentGetArgs {
     pub fields: Vec<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub ids: Option<Vec<i64>>,
+    pub ids: Option<Vec<String>>,
 }
 
 #[derive(Serialize, Debug, Clone, Default)]
@@ -56,13 +56,13 @@ pub struct TorrentAddArgs {
 pub struct TorrentRemoveArgs {
     pub delete_local_data: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub ids: Option<Vec<i64>>,
+    pub ids: Option<Vec<String>>,
 }
 
 #[derive(Serialize, Debug, Clone, Default)]
 pub struct TorrentActionArgs {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub ids: Option<Vec<i64>>,
+    pub ids: Option<Vec<String>>,
 }
 
 #[derive(Serialize, Debug, Clone, Default)]
@@ -72,5 +72,5 @@ pub struct TorrentSetLocationArgs {
     pub move_data: bool,
     pub location: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub ids: Option<Vec<i64>>,
+    pub ids: Option<Vec<String>>,
 }

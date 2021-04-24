@@ -27,7 +27,7 @@ impl Client {
         client
     }
 
-    pub async fn torrents(&self, ids: Option<Vec<i64>>) -> Result<Vec<Torrent>, ClientError> {
+    pub async fn torrents(&self, ids: Option<Vec<String>>) -> Result<Vec<Torrent>, ClientError> {
         let mut args = TorrentGetArgs::default();
         args.fields = utils::torrent_fields();
         args.ids = ids;
@@ -56,7 +56,7 @@ impl Client {
 
     pub async fn torrent_remove(
         &self,
-        ids: Option<Vec<i64>>,
+        ids: Option<Vec<String>>,
         delete_local_data: bool,
     ) -> Result<(), ClientError> {
         let mut args = TorrentRemoveArgs::default();
@@ -70,7 +70,7 @@ impl Client {
 
     pub async fn torrent_start(
         &self,
-        ids: Option<Vec<i64>>,
+        ids: Option<Vec<String>>,
         bypass_queue: bool,
     ) -> Result<(), ClientError> {
         let mut args = TorrentActionArgs::default();
@@ -87,7 +87,7 @@ impl Client {
         Ok(())
     }
 
-    pub async fn torrent_stop(&self, ids: Option<Vec<i64>>) -> Result<(), ClientError> {
+    pub async fn torrent_stop(&self, ids: Option<Vec<String>>) -> Result<(), ClientError> {
         let mut args = TorrentActionArgs::default();
         args.ids = ids;
         let request_args = Some(RequestArgs::TorrentActionArgs(args));
@@ -96,7 +96,7 @@ impl Client {
         Ok(())
     }
 
-    pub async fn torrent_verify(&self, ids: Option<Vec<i64>>) -> Result<(), ClientError> {
+    pub async fn torrent_verify(&self, ids: Option<Vec<String>>) -> Result<(), ClientError> {
         let mut args = TorrentActionArgs::default();
         args.ids = ids;
         let request_args = Some(RequestArgs::TorrentActionArgs(args));
@@ -105,7 +105,7 @@ impl Client {
         Ok(())
     }
 
-    pub async fn torrent_reannounce(&self, ids: Option<Vec<i64>>) -> Result<(), ClientError> {
+    pub async fn torrent_reannounce(&self, ids: Option<Vec<String>>) -> Result<(), ClientError> {
         let mut args = TorrentActionArgs::default();
         args.ids = ids;
         let request_args = Some(RequestArgs::TorrentActionArgs(args));
@@ -118,7 +118,7 @@ impl Client {
 
     pub async fn torrent_set_location(
         &self,
-        ids: Option<Vec<i64>>,
+        ids: Option<Vec<String>>,
         location: String,
         move_data: bool,
     ) -> Result<(), ClientError> {
