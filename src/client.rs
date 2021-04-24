@@ -3,6 +3,7 @@ use serde::de::DeserializeOwned;
 use url::Url;
 
 use std::cell::RefCell;
+use std::rc::Rc;
 
 use crate::error::ClientError;
 use crate::rpc::{
@@ -16,10 +17,16 @@ use crate::{Session, SessionStats, Torrent, TorrentAdded, Torrents};
 pub struct Client {
     address: Url,
     http_client: HttpClient,
-    session_id: RefCell<String>,
+    session_id: Rc<RefCell<String>>,
 }
 
 impl Client {
+    pub fn new(address: Url) -> Self {
+        let mut client = Self::default();
+        client.address = address;
+        client
+    }
+
     pub async fn torrents(&self, ids: Option<Vec<i64>>) -> Result<Vec<Torrent>, ClientError> {
         let mut args = TorrentGetArgs::default();
         args.fields = utils::torrent_fields();
@@ -197,7 +204,7 @@ impl Default for Client {
     fn default() -> Self {
         let address = Url::parse("http://127.0.0.1:9091/transmission/rpc/").unwrap();
         let http_client = HttpClient::new().unwrap();
-        let session_id = RefCell::new("0".into());
+        let session_id = Rc::new(RefCell::new("0".into()));
 
         Self {
             address,
