@@ -48,7 +48,7 @@ pub struct Torrent {
     // TODO: pub peers_from: PeersFrom,
     pub peers_getting_from_us: i64,
     pub peers_sending_to_us: i64,
-    pub percent_done: f64,
+    pub percent_done: f32,
     pub piece_count: i64,
     pub piece_size: i64,
     pub pieces: String,
