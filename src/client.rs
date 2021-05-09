@@ -1,5 +1,6 @@
-use isahc::{prelude::*, HttpClient, Request};
 use isahc::auth::Authentication;
+use isahc::http::StatusCode;
+use isahc::{prelude::*, HttpClient, Request};
 use serde::de::DeserializeOwned;
 use url::Url;
 
@@ -175,17 +176,26 @@ impl Client {
         let request = self.http_request(body.clone())?;
         let mut response = self.http_client.send_async(request).await?;
 
-        // Check for session id
+        // Update session id
         let headers = response.headers();
         if let Some(session_id) = headers.get("X-Transmission-Session-Id") {
             let session_id = session_id.to_str().unwrap().to_string();
             *self.session_id.borrow_mut() = session_id;
+        }
 
-            if response.status().as_u16() == 409 {
+        // Check html status code
+        match response.status() {
+            // Invalid session id header, resend the request
+            StatusCode::CONFLICT => {
                 debug!("Received status code 409, resend request.");
                 let request = self.http_request(body.clone())?;
                 response = self.http_client.send_async(request).await?;
             }
+            // Authentication needed
+            StatusCode::UNAUTHORIZED => {
+                return Err(ClientError::TransmissionUnauthorized);
+            }
+            _ => (),
         }
 
         Ok(response.text().await.unwrap())
@@ -193,7 +203,6 @@ impl Client {
 
     fn http_request(&self, body: String) -> Result<Request<String>, ClientError> {
         let session_id = self.session_id.borrow().clone();
-        debug!("{:?}", self.address.to_string());
         let request = Request::post(self.address.to_string())
             .header("X-Transmission-Session-Id", session_id)
             .body(body)?;
@@ -207,7 +216,8 @@ impl Default for Client {
         let address = Url::parse("http://127.0.0.1:9091/transmission/rpc/").unwrap();
         let http_client = HttpClient::builder()
             .authentication(Authentication::all())
-            .build().unwrap();
+            .build()
+            .unwrap();
         let session_id = Rc::new(RefCell::new("0".into()));
 
         Self {

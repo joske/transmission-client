@@ -2,6 +2,8 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum ClientError {
+    #[error("transmission authentication needed")]
+    TransmissionUnauthorized,
     #[error("transmission error")]
     TransmissionError(String),
     #[error("isahc network error")]
