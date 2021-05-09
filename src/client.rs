@@ -1,4 +1,5 @@
 use isahc::{prelude::*, HttpClient, Request};
+use isahc::auth::Authentication;
 use serde::de::DeserializeOwned;
 use url::Url;
 
@@ -192,6 +193,7 @@ impl Client {
 
     fn http_request(&self, body: String) -> Result<Request<String>, ClientError> {
         let session_id = self.session_id.borrow().clone();
+        debug!("{:?}", self.address.to_string());
         let request = Request::post(self.address.to_string())
             .header("X-Transmission-Session-Id", session_id)
             .body(body)?;
@@ -203,7 +205,9 @@ impl Client {
 impl Default for Client {
     fn default() -> Self {
         let address = Url::parse("http://127.0.0.1:9091/transmission/rpc/").unwrap();
-        let http_client = HttpClient::new().unwrap();
+        let http_client = HttpClient::builder()
+            .authentication(Authentication::all())
+            .build().unwrap();
         let session_id = Rc::new(RefCell::new("0".into()));
 
         Self {
