@@ -90,31 +90,17 @@ impl Client {
     }
 
     pub async fn torrent_stop(&self, ids: Option<Vec<String>>) -> Result<(), ClientError> {
-        let mut args = TorrentActionArgs::default();
-        args.ids = ids;
-        let request_args = Some(RequestArgs::TorrentActionArgs(args));
-
-        let _: RpcResponse<String> = self.send_request("torrent-stop", request_args).await?;
+        self.send_torrent_action("torrent-stop", ids).await?;
         Ok(())
     }
 
     pub async fn torrent_verify(&self, ids: Option<Vec<String>>) -> Result<(), ClientError> {
-        let mut args = TorrentActionArgs::default();
-        args.ids = ids;
-        let request_args = Some(RequestArgs::TorrentActionArgs(args));
-
-        let _: RpcResponse<String> = self.send_request("torrent-verify", request_args).await?;
+        self.send_torrent_action("torrent-verify", ids).await?;
         Ok(())
     }
 
     pub async fn torrent_reannounce(&self, ids: Option<Vec<String>>) -> Result<(), ClientError> {
-        let mut args = TorrentActionArgs::default();
-        args.ids = ids;
-        let request_args = Some(RequestArgs::TorrentActionArgs(args));
-
-        let _: RpcResponse<String> = self
-            .send_request("torrent-reannounce", request_args)
-            .await?;
+        self.send_torrent_action("torrent-reannounce", ids).await?;
         Ok(())
     }
 
@@ -136,6 +122,26 @@ impl Client {
         Ok(())
     }
 
+    pub async fn queue_move_top(&self, ids: Option<Vec<String>>) -> Result<(), ClientError> {
+        self.send_torrent_action("queue-move-top", ids).await?;
+        Ok(())
+    }
+
+    pub async fn queue_move_up(&self, ids: Option<Vec<String>>) -> Result<(), ClientError> {
+        self.send_torrent_action("queue-move-up", ids).await?;
+        Ok(())
+    }
+
+    pub async fn queue_move_down(&self, ids: Option<Vec<String>>) -> Result<(), ClientError> {
+        self.send_torrent_action("queue-move-down", ids).await?;
+        Ok(())
+    }
+
+    pub async fn queue_move_bottom(&self, ids: Option<Vec<String>>) -> Result<(), ClientError> {
+        self.send_torrent_action("queue-move-bottom", ids).await?;
+        Ok(())
+    }
+
     pub async fn session(&self) -> Result<Session, ClientError> {
         let response: RpcResponse<Session> = self.send_request("session-get", None).await?;
         Ok(response.arguments.unwrap())
@@ -148,6 +154,19 @@ impl Client {
 
     pub async fn session_close(&self) -> Result<(), ClientError> {
         let _: RpcResponse<String> = self.send_request("session-close", None).await?;
+        Ok(())
+    }
+
+    async fn send_torrent_action(
+        &self,
+        action: &str,
+        ids: Option<Vec<String>>,
+    ) -> Result<(), ClientError> {
+        let mut args = TorrentActionArgs::default();
+        args.ids = ids;
+        let request_args = Some(RequestArgs::TorrentActionArgs(args));
+
+        let _: RpcResponse<String> = self.send_request(&action, request_args).await?;
         Ok(())
     }
 

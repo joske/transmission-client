@@ -18,10 +18,10 @@ Rust wrapper for [Transmission rpc specs](https://github.com/transmission/transm
 - [ ] torrent-rename-path
 
 #### Queue
-- [ ] queue-move-top
-- [ ] queue-move-up
-- [ ] queue-move-down
-- [ ] queue-move-bottom
+- [x] queue-move-top
+- [x] queue-move-up
+- [x] queue-move-down
+- [x] queue-move-bottom
 
 #### Session
 - [x] session-get
