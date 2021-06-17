@@ -163,13 +163,22 @@ impl Client {
 
         let body = serde_json::to_string(&request)?;
         let result = self.send_post(body).await?;
-        let response: RpcResponse<T> = serde_json::from_str(&result)?;
 
-        if response.result != "success" {
-            return Err(ClientError::TransmissionError(response.result));
+        match serde_json::from_str::<RpcResponse<T>>(&result) {
+            Ok(response) => {
+                if response.result != "success" {
+                    return Err(ClientError::TransmissionError(response.result));
+                }
+
+                Ok(response)
+            }
+            Err(err) => {
+                error!("Unable to parse json: {}", err.to_string());
+                warn!("JSON: {:#?}", &result);
+
+                Err(err.into())
+            }
         }
-
-        Ok(response)
     }
 
     async fn send_post(&self, body: String) -> Result<String, ClientError> {
