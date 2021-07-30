@@ -2,6 +2,35 @@ use url::Url;
 
 use crate::rpc::RpcResponseArguments;
 
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum Encryption {
+    Required,
+    Preferred,
+    Tolerated,
+}
+
+impl Default for Encryption {
+    fn default() -> Self {
+        Self::Preferred
+    }
+}
+
+fn str_to_encryption<'de, D>(deserializer: D) -> Result<Encryption, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    use serde::Deserialize;
+
+    let encryption = match String::deserialize(deserializer)?.as_ref() {
+        "required" => Encryption::Required,
+        "prefered" => Encryption::Preferred,
+        "tolerated" => Encryption::Tolerated,
+        _ => Encryption::default(),
+    };
+    Ok(encryption)
+}
+
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "kebab-case")]
 pub struct Session {
@@ -21,7 +50,8 @@ pub struct Session {
     pub download_dir: String,
     pub download_queue_enabled: bool,
     pub download_queue_size: i64,
-    pub encryption: String,
+    #[serde(deserialize_with = "str_to_encryption")]
+    pub encryption: Encryption,
     pub idle_seeding_limit: i64,
     pub idle_seeding_limit_enabled: bool,
     pub incomplete_dir: String,

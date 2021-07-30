@@ -13,7 +13,7 @@ mod utils;
 
 pub use client::Client;
 pub use error::ClientError;
-pub use session::Session;
+pub use session::{Encryption, Session};
 pub use session_stats::{SessionStats, StatsDetails};
 pub use torrent::Torrent;
 
