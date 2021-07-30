@@ -9,9 +9,10 @@ use std::rc::Rc;
 
 use crate::error::ClientError;
 use crate::rpc::{
-    RequestArgs, RpcRequest, RpcResponse, RpcResponseArguments, TorrentActionArgs, TorrentAddArgs,
-    TorrentGetArgs, TorrentRemoveArgs, TorrentSetLocationArgs,
+    RequestArgs, RpcRequest, RpcResponse, RpcResponseArguments, SessionArgs, TorrentActionArgs,
+    TorrentAddArgs, TorrentGetArgs, TorrentRemoveArgs, TorrentSetLocationArgs,
 };
+use crate::session::Encryption;
 use crate::utils;
 use crate::{Session, SessionStats, Torrent, TorrentAdded, Torrents};
 
@@ -54,6 +55,20 @@ impl Client {
         } else {
             Ok(result_args.torrent_duplicate)
         }
+    }
+
+    pub async fn encryption(&self) -> Result<Encryption, ClientError> {
+        let session = self.session().await?;
+        Ok(session.encryption)
+    }
+
+    pub async fn set_encryption(&self, encryption: Encryption) -> Result<(), ClientError> {
+        let mut args = SessionArgs::default();
+        args.encryption = Some(encryption);
+        let request_args = Some(RequestArgs::SessionArgs(args));
+        let _response: RpcResponse<String> = self.send_request("session-set", request_args).await?;
+
+        Ok(())
     }
 
     pub async fn torrent_remove(
@@ -144,6 +159,7 @@ impl Client {
 
     pub async fn session(&self) -> Result<Session, ClientError> {
         let response: RpcResponse<Session> = self.send_request("session-get", None).await?;
+        log::debug!("enc {:?}", response.arguments.as_ref().unwrap().encryption);
         Ok(response.arguments.unwrap())
     }
 
