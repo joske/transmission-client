@@ -1,4 +1,5 @@
 use crate::session::Encryption;
+use std::path::PathBuf;
 
 #[derive(Debug, Serialize, Default)]
 pub struct RpcRequest {
@@ -81,6 +82,10 @@ pub struct TorrentSetLocationArgs {
 #[derive(Serialize, Debug, Clone, Default)]
 #[serde(rename_all = "kebab-case")]
 pub struct SessionArgs {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub download_dir: Option<PathBuf>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub download_queue_size: Option<i64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub encryption: Option<Encryption>,
 }

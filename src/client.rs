@@ -5,6 +5,7 @@ use serde::de::DeserializeOwned;
 use url::Url;
 
 use std::cell::RefCell;
+use std::path::{Path, PathBuf};
 use std::rc::Rc;
 
 use crate::error::ClientError;
@@ -55,6 +56,40 @@ impl Client {
         } else {
             Ok(result_args.torrent_duplicate)
         }
+    }
+
+    pub async fn download_dir(&self) -> Result<PathBuf, ClientError> {
+        let session = self.session().await?;
+        Ok(session.download_dir)
+    }
+
+    pub async fn set_download_dir<P: AsRef<Path>>(
+        &self,
+        download_dir: P,
+    ) -> Result<(), ClientError> {
+        let mut args = SessionArgs::default();
+        args.download_dir = Some(download_dir.as_ref().to_owned());
+        let request_args = Some(RequestArgs::SessionArgs(args));
+        let _response: RpcResponse<String> = self.send_request("session-set", request_args).await?;
+
+        Ok(())
+    }
+
+    pub async fn download_queue_size(&self) -> Result<i64, ClientError> {
+        let session = self.session().await?;
+        Ok(session.download_queue_size)
+    }
+
+    pub async fn set_download_queue_size(
+        &self,
+        download_queue_size: i64,
+    ) -> Result<(), ClientError> {
+        let mut args = SessionArgs::default();
+        args.download_queue_size = Some(download_queue_size);
+        let request_args = Some(RequestArgs::SessionArgs(args));
+        let _response: RpcResponse<String> = self.send_request("session-set", request_args).await?;
+
+        Ok(())
     }
 
     pub async fn encryption(&self) -> Result<Encryption, ClientError> {
@@ -159,7 +194,6 @@ impl Client {
 
     pub async fn session(&self) -> Result<Session, ClientError> {
         let response: RpcResponse<Session> = self.send_request("session-get", None).await?;
-        log::debug!("enc {:?}", response.arguments.as_ref().unwrap().encryption);
         Ok(response.arguments.unwrap())
     }
 

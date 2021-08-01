@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use url::Url;
 
 use crate::rpc::RpcResponseArguments;
@@ -32,7 +33,7 @@ pub struct Session {
     pub cache_size_mb: i64,
     pub config_dir: String,
     pub dht_enabled: bool,
-    pub download_dir: String,
+    pub download_dir: PathBuf,
     pub download_queue_enabled: bool,
     pub download_queue_size: i64,
     pub encryption: Encryption,
