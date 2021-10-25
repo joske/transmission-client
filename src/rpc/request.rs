@@ -1,3 +1,5 @@
+use crate::TorrentMutator;
+
 #[derive(Debug, Serialize, Default)]
 pub struct RpcRequest {
     pub method: String,
@@ -8,6 +10,7 @@ pub struct RpcRequest {
 #[serde(untagged)]
 pub enum RequestArgs {
     TorrentGetArgs(TorrentGetArgs),
+    TorrentSetArgs(TorrentSetArgs),
     TorrentAddArgs(TorrentAddArgs),
     TorrentRemoveArgs(TorrentRemoveArgs),
     TorrentActionArgs(TorrentActionArgs),
@@ -49,6 +52,15 @@ pub struct TorrentAddArgs {
     pub priority_low: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub priority_normal: Option<Vec<String>>,
+}
+
+#[derive(Serialize, Debug, Clone, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct TorrentSetArgs {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ids: Option<Vec<String>>,
+    #[serde(flatten)]
+    pub mutator: TorrentMutator,
 }
 
 #[derive(Serialize, Debug, Clone, Default)]

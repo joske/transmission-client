@@ -10,10 +10,10 @@ use std::rc::Rc;
 use crate::error::ClientError;
 use crate::rpc::{
     RequestArgs, RpcRequest, RpcResponse, RpcResponseArguments, TorrentActionArgs, TorrentAddArgs,
-    TorrentGetArgs, TorrentRemoveArgs, TorrentSetLocationArgs,
+    TorrentGetArgs, TorrentRemoveArgs, TorrentSetArgs, TorrentSetLocationArgs,
 };
 use crate::utils;
-use crate::{Session, SessionStats, Torrent, TorrentAdded, Torrents};
+use crate::{Session, SessionStats, Torrent, TorrentAdded, TorrentMutator, Torrents};
 
 #[derive(Debug, Clone)]
 pub struct Client {
@@ -38,6 +38,18 @@ impl Client {
         let response: RpcResponse<Torrents> =
             self.send_request("torrent-get", request_args).await?;
         Ok(response.arguments.unwrap().torrents)
+    }
+
+    pub async fn torrent_set(
+        &self,
+        ids: Option<Vec<String>>,
+        mutator: TorrentMutator,
+    ) -> Result<(), ClientError> {
+        let args = TorrentSetArgs { ids, mutator };
+        let request_args = Some(RequestArgs::TorrentSetArgs(args));
+
+        let _: RpcResponse<String> = self.send_request("torrent-set", request_args).await?;
+        Ok(())
     }
 
     pub async fn torrent_add(&self, filename: &str) -> Result<Option<Torrent>, ClientError> {
