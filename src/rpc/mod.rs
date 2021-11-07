@@ -3,6 +3,6 @@ mod response;
 
 pub use request::{
     RequestArgs, RpcRequest, TorrentActionArgs, TorrentAddArgs, TorrentGetArgs, TorrentRemoveArgs,
-    TorrentSetLocationArgs,
+    TorrentSetArgs, TorrentSetLocationArgs,
 };
 pub use response::{RpcResponse, RpcResponseArguments};

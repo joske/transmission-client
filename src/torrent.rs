@@ -16,7 +16,7 @@ pub struct FileStat {
     pub priority: i64,
 }
 
-#[derive(Deserialize, Debug, Default)]
+#[derive(Deserialize, Debug, Default, PartialEq, Clone)]
 #[serde(rename_all = "camelCase")]
 #[serde(default)]
 pub struct Torrent {
@@ -100,6 +100,61 @@ pub struct Torrent {
 #[derive(Deserialize, Debug)]
 pub struct Torrents {
     pub torrents: Vec<Torrent>,
+}
+
+#[derive(Serialize, Debug, Clone, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct TorrentMutator {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bandwidth_priority: Option<i64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub download_limit: Option<i64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub download_limited: Option<bool>,
+    //#[serde(skip_serializing_if = "Option::is_none")]
+    //#[serde(rename = "files-wanted")]
+    // TODO: pub files_wanted: [array]
+    //#[serde(skip_serializing_if = "Option::is_none")]
+    //#[serde(rename = "files-unwanted")]
+    //pub files_unwanted
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub honors_session_limits: Option<bool>,
+    //#[serde(skip_serializing_if = "Option::is_none")]
+    // TODO: pub labels: [array]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub location: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "peer-limit")]
+    pub peer_limit: Option<i64>,
+    //#[serde(skip_serializing_if = "Option::is_none")]
+    //#[serde(rename = "priority-high")]
+    // TODO: pub priority_high: [array]
+    //#[serde(skip_serializing_if = "Option::is_none")]
+    //#[serde(rename = "priority-low")]
+    // TODO: pub priority_low: [array]
+    //#[serde(skip_serializing_if = "Option::is_none")]
+    //#[serde(rename = "priority-normal")]
+    // TODO: pub priority_normal: [array]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub queue_position: Option<i64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub seed_idle_limit: Option<i64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub seed_idle_mode: Option<i64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub seed_ratio_limit: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub seed_ratio_mode: Option<i64>,
+    //#[serde(skip_serializing_if = "Option::is_none")]
+    // TODO: pub tracker_add: [array]
+    //#[serde(skip_serializing_if = "Option::is_none")]
+    // TODO: pub tracker_remove: [array]
+    //#[serde(skip_serializing_if = "Option::is_none")]
+    // TODO: pub tracker_replace: [array]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub upload_limit: Option<i64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub upload_limited: Option<bool>,
 }
 
 #[derive(Deserialize, Debug)]
