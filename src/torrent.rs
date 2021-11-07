@@ -1,5 +1,21 @@
 use crate::rpc::RpcResponseArguments;
 
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct File {
+    pub bytes_completed: i64,
+    pub length :i64,
+    pub name: String,
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct FileStat {
+    pub bytes_completed: i64,
+    pub wanted :bool,
+    pub priority: i64,
+}
+
 #[derive(Deserialize, Debug, Default, PartialEq, Clone)]
 #[serde(rename_all = "camelCase")]
 #[serde(default)]
@@ -24,8 +40,8 @@ pub struct Torrent {
     pub eta_idle: i64,
     #[serde(rename = "file-count")]
     pub file_count: i64,
-    // TODO: pub file_stats: Vec<FileStat>,
-    // TODO: pub files: Vec<File>,
+    pub file_stats: Vec<FileStat>,
+    pub files: Vec<File>,
     pub hash_string: String,
     pub have_unchecked: i64,
     pub have_valid: i64,
