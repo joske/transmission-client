@@ -1,18 +1,18 @@
 use crate::rpc::RpcResponseArguments;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, PartialEq, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct File {
     pub bytes_completed: i64,
-    pub length :i64,
+    pub length: i64,
     pub name: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, PartialEq, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct FileStat {
     pub bytes_completed: i64,
-    pub wanted :bool,
+    pub wanted: bool,
     pub priority: i64,
 }
 
