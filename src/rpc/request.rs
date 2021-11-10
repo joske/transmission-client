@@ -1,4 +1,6 @@
 use crate::session::Encryption;
+use crate::TorrentMutator;
+
 use std::path::PathBuf;
 
 #[derive(Debug, Serialize, Default)]

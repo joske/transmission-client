@@ -11,7 +11,7 @@ use std::rc::Rc;
 use crate::error::ClientError;
 use crate::rpc::{
     RequestArgs, RpcRequest, RpcResponse, RpcResponseArguments, SessionArgs, TorrentActionArgs,
-    TorrentAddArgs, TorrentGetArgs, TorrentRemoveArgs, TorrentSetLocationArgs,
+    TorrentAddArgs, TorrentGetArgs, TorrentRemoveArgs, TorrentSetArgs, TorrentSetLocationArgs,
 };
 use crate::session::Encryption;
 use crate::utils;
