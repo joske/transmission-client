@@ -10,7 +10,7 @@ Rust wrapper for [Transmission rpc specs](https://github.com/transmission/transm
 - [x] torrent-stop
 - [x] torrent-verify
 - [x] torrent-reannounce
-- [ ] torrent-set
+- [x] torrent-set
 - [x] torrent-get
 - [x] torrent-add
 - [x] torrent-remove
