@@ -53,7 +53,9 @@ pub struct Session {
     pub rename_partial_files: bool,
     pub rpc_version: i32,
     pub rpc_version_minimum: i32,
-    //TODO: pub rpc_version_semver: String,
+    pub rpc_version_semver: String,
+    pub script_torrent_added_enabled: bool,
+    pub script_torrent_added_filename: String,
     pub script_torrent_done_enabled: bool,
     pub script_torrent_done_filename: String,
     pub seed_queue_enabled: bool,
@@ -134,6 +136,10 @@ pub struct SessionMutator {
     pub queue_stalled_minutes: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub rename_partial_files: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub script_torrent_added_enabled: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub script_torrent_added_filename: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub script_torrent_done_enabled: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
