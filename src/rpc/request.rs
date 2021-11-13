@@ -1,7 +1,4 @@
-use crate::session::Encryption;
-use crate::TorrentMutator;
-
-use std::path::PathBuf;
+use crate::{SessionMutator, TorrentMutator};
 
 #[derive(Debug, Serialize, Default)]
 pub struct RpcRequest {
@@ -18,7 +15,7 @@ pub enum RequestArgs {
     TorrentRemoveArgs(TorrentRemoveArgs),
     TorrentActionArgs(TorrentActionArgs),
     TorrentSetLocationArgs(TorrentSetLocationArgs),
-    SessionArgs(SessionArgs),
+    SessionSetArgs(SessionSetArgs),
 }
 
 #[derive(Serialize, Debug, Clone, Default)]
@@ -93,11 +90,7 @@ pub struct TorrentSetLocationArgs {
 
 #[derive(Serialize, Debug, Clone, Default)]
 #[serde(rename_all = "kebab-case")]
-pub struct SessionArgs {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub download_dir: Option<PathBuf>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub download_queue_size: Option<i64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub encryption: Option<Encryption>,
+pub struct SessionSetArgs {
+    #[serde(flatten)]
+    pub mutator: SessionMutator,
 }
