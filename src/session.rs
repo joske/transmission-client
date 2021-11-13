@@ -39,7 +39,7 @@ pub struct Session {
     pub encryption: Encryption,
     pub idle_seeding_limit: i32,
     pub idle_seeding_limit_enabled: bool,
-    pub incomplete_dir: String,
+    pub incomplete_dir: PathBuf,
     pub incomplete_dir_enabled: bool,
     pub lpd_enabled: bool,
     pub peer_limit_global: i32,
@@ -53,6 +53,7 @@ pub struct Session {
     pub rename_partial_files: bool,
     pub rpc_version: i32,
     pub rpc_version_minimum: i32,
+    //TODO: pub rpc_version_semver: String,
     pub script_torrent_done_enabled: bool,
     pub script_torrent_done_filename: String,
     pub seed_queue_enabled: bool,
@@ -110,7 +111,7 @@ pub struct SessionMutator {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub idle_seeding_limit_enabled: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub incomplete_dir: Option<String>,
+    pub incomplete_dir: Option<PathBuf>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub incomplete_dir_enabled: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
