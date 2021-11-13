@@ -9,11 +9,13 @@ use std::rc::Rc;
 
 use crate::error::ClientError;
 use crate::rpc::{
-    RequestArgs, RpcRequest, RpcResponse, RpcResponseArguments, TorrentActionArgs, TorrentAddArgs,
-    TorrentGetArgs, TorrentRemoveArgs, TorrentSetArgs, TorrentSetLocationArgs,
+    RequestArgs, RpcRequest, RpcResponse, RpcResponseArguments, SessionSetArgs, TorrentActionArgs,
+    TorrentAddArgs, TorrentGetArgs, TorrentRemoveArgs, TorrentSetArgs, TorrentSetLocationArgs,
 };
 use crate::utils;
-use crate::{Session, SessionStats, Torrent, TorrentAdded, TorrentMutator, Torrents};
+use crate::{
+    Session, SessionMutator, SessionStats, Torrent, TorrentAdded, TorrentMutator, Torrents,
+};
 
 #[derive(Debug, Clone)]
 pub struct Client {
@@ -157,6 +159,14 @@ impl Client {
     pub async fn session(&self) -> Result<Session, ClientError> {
         let response: RpcResponse<Session> = self.send_request("session-get", None).await?;
         Ok(response.arguments.unwrap())
+    }
+
+    pub async fn session_set(&self, mutator: SessionMutator) -> Result<(), ClientError> {
+        let args = SessionSetArgs { mutator };
+        let request_args = Some(RequestArgs::SessionSetArgs(args));
+
+        let _: RpcResponse<String> = self.send_request("session-set", request_args).await?;
+        Ok(())
     }
 
     pub async fn session_stats(&self) -> Result<SessionStats, ClientError> {

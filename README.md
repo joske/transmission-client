@@ -25,7 +25,7 @@ Rust wrapper for [Transmission rpc specs](https://github.com/transmission/transm
 
 #### Session
 - [x] session-get
-- [ ] session-set
+- [x] session-set
 - [x] session-stats
 
 #### Miscellaneous stuff

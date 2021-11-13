@@ -1,4 +1,4 @@
-use crate::TorrentMutator;
+use crate::{SessionMutator, TorrentMutator};
 
 #[derive(Debug, Serialize, Default)]
 pub struct RpcRequest {
@@ -15,6 +15,7 @@ pub enum RequestArgs {
     TorrentRemoveArgs(TorrentRemoveArgs),
     TorrentActionArgs(TorrentActionArgs),
     TorrentSetLocationArgs(TorrentSetLocationArgs),
+    SessionSetArgs(SessionSetArgs),
 }
 
 #[derive(Serialize, Debug, Clone, Default)]
@@ -85,4 +86,11 @@ pub struct TorrentSetLocationArgs {
     pub location: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ids: Option<Vec<String>>,
+}
+
+#[derive(Serialize, Debug, Clone, Default)]
+#[serde(rename_all = "kebab-case")]
+pub struct SessionSetArgs {
+    #[serde(flatten)]
+    pub mutator: SessionMutator,
 }
