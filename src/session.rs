@@ -53,8 +53,11 @@ pub struct Session {
     pub rename_partial_files: bool,
     pub rpc_version: i32,
     pub rpc_version_minimum: i32,
+    #[serde(default)]
     pub rpc_version_semver: String,
+    #[serde(default)]
     pub script_torrent_added_enabled: bool,
+    #[serde(default)]
     pub script_torrent_added_filename: String,
     pub script_torrent_done_enabled: bool,
     pub script_torrent_done_filename: String,
@@ -64,6 +67,7 @@ pub struct Session {
     pub seed_ratio_limit: i32,
     #[serde(rename = "seedRatioLimited")]
     pub seed_ratio_limited: bool,
+    #[serde(default)]
     pub session_id: String,
     pub speed_limit_down: i32,
     pub speed_limit_down_enabled: bool,
@@ -71,6 +75,7 @@ pub struct Session {
     pub speed_limit_up_enabled: bool,
     pub start_added_torrents: bool,
     pub trash_original_torrent_files: bool,
+    // TODO: units
     pub utp_enabled: bool,
     pub version: String,
 }
