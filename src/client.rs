@@ -1,4 +1,3 @@
-use isahc::auth::Authentication;
 use isahc::http::StatusCode;
 use isahc::{prelude::*, HttpClient, Request};
 use serde::de::DeserializeOwned;
@@ -14,12 +13,14 @@ use crate::rpc::{
 };
 use crate::utils;
 use crate::{
-    Session, SessionMutator, SessionStats, Torrent, TorrentAdded, TorrentMutator, Torrents,
+    Authentication, Session, SessionMutator, SessionStats, Torrent, TorrentAdded, TorrentMutator,
+    Torrents,
 };
 
 #[derive(Debug, Clone)]
 pub struct Client {
     address: Url,
+    authentication: Rc<RefCell<Option<Authentication>>>,
     http_client: HttpClient,
     session_id: Rc<RefCell<String>>,
 }
@@ -29,6 +30,10 @@ impl Client {
         let mut client = Self::default();
         client.address = address;
         client
+    }
+
+    pub fn set_authentication(&self, auth: Option<Authentication>) {
+        *self.authentication.borrow_mut() = auth;
     }
 
     pub async fn torrents(&self, ids: Option<Vec<String>>) -> Result<Vec<Torrent>, ClientError> {
@@ -253,9 +258,19 @@ impl Client {
 
     fn http_request(&self, body: String) -> Result<Request<String>, ClientError> {
         let session_id = self.session_id.borrow().clone();
-        let request = Request::post(self.address.to_string())
-            .header("X-Transmission-Session-Id", session_id)
-            .body(body)?;
+
+        let request = if let Some(auth) = &*self.authentication.borrow() {
+            warn!("auth with: {}", auth.base64_encoded());
+
+            Request::post(self.address.to_string())
+                .header("X-Transmission-Session-Id", session_id)
+                .header("Authorization", auth.base64_encoded())
+                .body(body)?
+        } else {
+            Request::post(self.address.to_string())
+                .header("X-Transmission-Session-Id", session_id)
+                .body(body)?
+        };
 
         Ok(request)
     }
@@ -265,13 +280,14 @@ impl Default for Client {
     fn default() -> Self {
         let address = Url::parse("http://127.0.0.1:9091/transmission/rpc/").unwrap();
         let http_client = HttpClient::builder()
-            .authentication(Authentication::all())
+            .authentication(isahc::auth::Authentication::all())
             .build()
             .unwrap();
         let session_id = Rc::new(RefCell::new("0".into()));
 
         Self {
             address,
+            authentication: Rc::default(),
             http_client,
             session_id,
         }
