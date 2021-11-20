@@ -9,11 +9,8 @@ pub struct Authentication {
 impl Authentication {
     pub fn base64_encoded(&self) -> String {
         let config = Config::new(CharacterSet::Standard, false);
+        let auth = format!("{}:{}", &self.username, &self.password);
 
-        format!(
-            "Basic {}6{}=",
-            encode_config(&self.username, config),
-            encode_config(&self.password, config)
-        )
+        format!("Basic {}=", encode_config(&auth, config))
     }
 }
