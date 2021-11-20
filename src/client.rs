@@ -260,8 +260,6 @@ impl Client {
         let session_id = self.session_id.borrow().clone();
 
         let request = if let Some(auth) = &*self.authentication.borrow() {
-            warn!("auth with: {}", auth.base64_encoded());
-
             Request::post(self.address.to_string())
                 .header("X-Transmission-Session-Id", session_id)
                 .header("Authorization", auth.base64_encoded())
