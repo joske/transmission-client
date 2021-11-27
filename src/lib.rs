@@ -17,6 +17,6 @@ pub use client::Client;
 pub use error::ClientError;
 pub use session::{Encryption, Session, SessionMutator};
 pub use session_stats::{SessionStats, StatsDetails};
-pub use torrent::{Torrent, TorrentMutator};
+pub use torrent::{File, Torrent, TorrentMutator};
 
 use torrent::{TorrentAdded, Torrents};
