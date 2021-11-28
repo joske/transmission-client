@@ -59,11 +59,30 @@ impl Client {
         Ok(())
     }
 
-    pub async fn torrent_add(&self, filename: &str) -> Result<Option<Torrent>, ClientError> {
+    pub async fn torrent_add_filename(
+        &self,
+        filename: &str,
+    ) -> Result<Option<Torrent>, ClientError> {
         let mut args = TorrentAddArgs::default();
         args.filename = Some(filename.into());
         let request_args = Some(RequestArgs::TorrentAddArgs(args));
+        self.torrent_add(request_args).await
+    }
 
+    pub async fn torrent_add_metainfo(
+        &self,
+        metainfo: &str,
+    ) -> Result<Option<Torrent>, ClientError> {
+        let mut args = TorrentAddArgs::default();
+        args.metainfo = Some(metainfo.into());
+        let request_args = Some(RequestArgs::TorrentAddArgs(args));
+        self.torrent_add(request_args).await
+    }
+
+    async fn torrent_add(
+        &self,
+        request_args: Option<RequestArgs>,
+    ) -> Result<Option<Torrent>, ClientError> {
         let response: RpcResponse<TorrentAdded> =
             self.send_request("torrent-add", request_args).await?;
 
