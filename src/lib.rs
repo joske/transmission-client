@@ -7,6 +7,7 @@ mod authentication;
 mod client;
 mod error;
 mod rpc;
+mod port_test;
 mod session;
 mod session_stats;
 mod torrent;
@@ -19,4 +20,5 @@ pub use session::{Encryption, Session, SessionMutator};
 pub use session_stats::{SessionStats, StatsDetails};
 pub use torrent::{File, Torrent, TorrentMutator};
 
+use port_test::PortTest;
 use torrent::{TorrentAdded, Torrents};

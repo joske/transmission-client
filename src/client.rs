@@ -14,7 +14,7 @@ use crate::rpc::{
 use crate::utils;
 use crate::{
     Authentication, Session, SessionMutator, SessionStats, Torrent, TorrentAdded, TorrentMutator,
-    Torrents,
+    Torrents, PortTest
 };
 
 #[derive(Debug, Clone)]
@@ -201,6 +201,11 @@ impl Client {
     pub async fn session_close(&self) -> Result<(), ClientError> {
         let _: RpcResponse<String> = self.send_request("session-close", None).await?;
         Ok(())
+    }
+
+    pub async fn port_test(&self) -> Result<bool, ClientError> {
+        let response: RpcResponse<PortTest> = self.send_request("port-test", None).await?;
+        Ok(response.arguments.unwrap().port_is_open)
     }
 
     async fn send_torrent_action(
