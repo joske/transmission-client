@@ -69,7 +69,7 @@ pub struct Torrent {
     pub piece_size: i64,
     pub pieces: String,
     #[serde(rename = "primary-mime-type")]
-    pub primary_mime_type: i64,
+    pub primary_mime_type: String,
     pub priorities: Vec<i64>,
     pub queue_position: i64,
     pub rate_download: i64,
