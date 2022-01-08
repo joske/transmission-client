@@ -1,3 +1,5 @@
+use serde::{Deserialize, Deserializer};
+
 pub fn torrent_fields() -> Vec<String> {
     vec![
         "activityDate".into(),
@@ -73,4 +75,22 @@ pub fn torrent_fields() -> Vec<String> {
         "webseeds".into(),
         "webseedsSendingToUs".into(),
     ]
+}
+
+
+pub fn string_fallback<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum StringOrNumber {
+        String(String),
+        Number(i64),
+    }
+
+    match StringOrNumber::deserialize(deserializer)? {
+        StringOrNumber::String(s) => Ok(s),
+        StringOrNumber::Number(i) => Ok(i.to_string()),
+    }
 }

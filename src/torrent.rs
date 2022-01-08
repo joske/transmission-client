@@ -1,4 +1,5 @@
 use crate::rpc::RpcResponseArguments;
+use crate::utils::string_fallback;
 
 #[derive(Deserialize, Debug, PartialEq, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -69,6 +70,7 @@ pub struct Torrent {
     pub piece_size: i64,
     pub pieces: String,
     #[serde(rename = "primary-mime-type")]
+    #[serde(deserialize_with = "string_fallback")]
     pub primary_mime_type: String,
     pub priorities: Vec<i64>,
     pub queue_position: i64,
