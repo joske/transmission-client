@@ -64,7 +64,7 @@ pub struct Session {
     pub seed_queue_enabled: bool,
     pub seed_queue_size: i32,
     #[serde(rename = "seedRatioLimit")]
-    pub seed_ratio_limit: i32,
+    pub seed_ratio_limit: f32,
     #[serde(rename = "seedRatioLimited")]
     pub seed_ratio_limited: bool,
     #[serde(default)]
@@ -155,7 +155,7 @@ pub struct SessionMutator {
     pub seed_queue_size: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "seedRatioLimit")]
-    pub seed_ratio_limit: Option<i32>,
+    pub seed_ratio_limit: Option<f32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "seedRatioLimited")]
     pub seed_ratio_limited: Option<bool>,
