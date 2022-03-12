@@ -13,8 +13,8 @@ use crate::rpc::{
 };
 use crate::utils;
 use crate::{
-    Authentication, Session, SessionMutator, SessionStats, Torrent, TorrentAdded, TorrentMutator,
-    Torrents, PortTest
+    Authentication, Session, SessionMutator, SessionStats, Torrent, TorrentFiles, TorrentPeers, TorrentTrackers, TorrentAdded, TorrentMutator,
+    TorrentList, TorrentFilesList, TorrentPeersList, TorrentTrackersList, PortTest
 };
 
 #[derive(Debug, Clone)]
@@ -36,13 +36,46 @@ impl Client {
         *self.authentication.borrow_mut() = auth;
     }
 
-    pub async fn torrents(&self, ids: Option<Vec<String>>) -> Result<Vec<Torrent>, ClientError> {
+    pub async fn torrents(&self, ids: Option<Vec<i32>>) -> Result<Vec<Torrent>, ClientError> {
         let mut args = TorrentGetArgs::default();
         args.fields = utils::torrent_fields();
         args.ids = ids;
         let request_args = Some(RequestArgs::TorrentGetArgs(args));
 
-        let response: RpcResponse<Torrents> =
+        let response: RpcResponse<TorrentList> =
+            self.send_request("torrent-get", request_args).await?;
+        Ok(response.arguments.unwrap().torrents)
+    }
+
+    pub async fn torrents_files(&self, ids: Option<Vec<i32>>) -> Result<Vec<TorrentFiles>, ClientError> {
+        let mut args = TorrentGetArgs::default();
+        args.fields = utils::torrent_files_fields();
+        args.ids = ids;
+        let request_args = Some(RequestArgs::TorrentGetArgs(args));
+
+        let response: RpcResponse<TorrentFilesList> =
+            self.send_request("torrent-get", request_args).await?;
+        Ok(response.arguments.unwrap().torrents)
+    }
+
+    pub async fn torrents_peers(&self, ids: Option<Vec<i32>>) -> Result<Vec<TorrentPeers>, ClientError> {
+        let mut args = TorrentGetArgs::default();
+        args.fields = utils::torrent_peers_fields();
+        args.ids = ids;
+        let request_args = Some(RequestArgs::TorrentGetArgs(args));
+
+        let response: RpcResponse<TorrentPeersList> =
+            self.send_request("torrent-get", request_args).await?;
+        Ok(response.arguments.unwrap().torrents)
+    }
+
+    pub async fn torrents_trackers(&self, ids: Option<Vec<i32>>) -> Result<Vec<TorrentTrackers>, ClientError> {
+        let mut args = TorrentGetArgs::default();
+        args.fields = utils::torrent_trackers_fields();
+        args.ids = ids;
+        let request_args = Some(RequestArgs::TorrentGetArgs(args));
+
+        let response: RpcResponse<TorrentTrackersList> =
             self.send_request("torrent-get", request_args).await?;
         Ok(response.arguments.unwrap().torrents)
     }
@@ -244,7 +277,7 @@ impl Client {
             }
             Err(err) => {
                 error!("Unable to parse json: {}", err.to_string());
-                warn!("JSON: {:#?}", &result);
+                warn!("JSON: {}", &result);
 
                 Err(err.into())
             }

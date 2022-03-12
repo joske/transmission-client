@@ -2,6 +2,7 @@ use serde::{Deserialize, Deserializer};
 
 pub fn torrent_fields() -> Vec<String> {
     vec![
+        "id".into(),
         "activityDate".into(),
         "addedDate".into(),
         "bandwidthPriority".into(),
@@ -20,14 +21,10 @@ pub fn torrent_fields() -> Vec<String> {
         "errorString".into(),
         "eta".into(),
         "etaIdle".into(),
-        "file-count".into(),
-        "files".into(),
-        "fileStats".into(),
         "hashString".into(),
         "haveUnchecked".into(),
         "haveValid".into(),
         "honorsSessionLimits".into(),
-        "id".into(),
         "isFinished".into(),
         "isPrivate".into(),
         "isStalled".into(),
@@ -35,20 +32,12 @@ pub fn torrent_fields() -> Vec<String> {
         "leftUntilDone".into(),
         "magnetLink".into(),
         "manualAnnounceTime".into(),
-        "maxConnectedPeers".into(),
         "metadataPercentComplete".into(),
         "name".into(),
-        "peer-limit".into(),
-        "peers".into(),
-        "peersConnected".into(),
-        "peersFrom".into(),
-        "peersGettingFromUs".into(),
-        "peersSendingToUs".into(),
         "percentDone".into(),
         "pieces".into(),
         "pieceCount".into(),
         "pieceSize".into(),
-        "priorities".into(),
         "primary-mime-type".into(),
         "queuePosition".into(),
         "rateDownload".into(),
@@ -63,20 +52,48 @@ pub fn torrent_fields() -> Vec<String> {
         "sizeWhenDone".into(),
         "startDate".into(),
         "status".into(),
-        "trackers".into(),
-        "trackerStats".into(),
         "totalSize".into(),
         "torrentFile".into(),
         "uploadedEver".into(),
         "uploadLimit".into(),
         "uploadLimited".into(),
         "uploadRatio".into(),
+    ]
+}
+
+pub fn torrent_files_fields() -> Vec<String> {
+    vec![
+        "id".into(),
+        "file-count".into(),
+        "files".into(),
+        "fileStats".into(),
         "wanted".into(),
+        "priorities".into(),
+    ]
+}
+
+pub fn torrent_peers_fields() -> Vec<String> {
+    vec![
+        "id".into(),
+        "peer-limit".into(),
+        "peers".into(),
+        "peersConnected".into(),
+        "peersFrom".into(),
+        "peersGettingFromUs".into(),
+        "peersSendingToUs".into(),
+        "maxConnectedPeers".into(),
         "webseeds".into(),
         "webseedsSendingToUs".into(),
     ]
 }
 
+pub fn torrent_trackers_fields() -> Vec<String> {
+    vec![
+        "id".into(),
+        "trackers".into(),
+        "trackerStats".into(),
+    ]
+}
 
 pub fn string_fallback<'de, D>(deserializer: D) -> Result<String, D::Error>
 where

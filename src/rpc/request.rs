@@ -22,7 +22,7 @@ pub enum RequestArgs {
 pub struct TorrentGetArgs {
     pub fields: Vec<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub ids: Option<Vec<String>>,
+    pub ids: Option<Vec<i32>>,
 }
 
 #[derive(Serialize, Debug, Clone, Default)]

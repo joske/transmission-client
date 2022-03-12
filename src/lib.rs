@@ -18,7 +18,7 @@ pub use client::Client;
 pub use error::ClientError;
 pub use session::{Encryption, Session, SessionMutator};
 pub use session_stats::{SessionStats, StatsDetails};
-pub use torrent::{File, Torrent, TorrentMutator};
+pub use torrent::{Torrent, TorrentMutator, TorrentFiles, File, FileStat, TorrentPeers, TorrentTrackers};
 
 use port_test::PortTest;
-use torrent::{TorrentAdded, Torrents};
+use torrent::{TorrentAdded, TorrentList, TorrentFilesList, TorrentPeersList, TorrentTrackersList};
