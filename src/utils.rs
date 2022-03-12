@@ -88,11 +88,7 @@ pub fn torrent_peers_fields() -> Vec<String> {
 }
 
 pub fn torrent_trackers_fields() -> Vec<String> {
-    vec![
-        "id".into(),
-        "trackers".into(),
-        "trackerStats".into(),
-    ]
+    vec!["id".into(), "trackers".into(), "trackerStats".into()]
 }
 
 pub fn string_fallback<'de, D>(deserializer: D) -> Result<String, D::Error>

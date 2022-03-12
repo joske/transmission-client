@@ -6,8 +6,8 @@ extern crate serde_derive;
 mod authentication;
 mod client;
 mod error;
-mod rpc;
 mod port_test;
+mod rpc;
 mod session;
 mod session_stats;
 mod torrent;
@@ -18,7 +18,9 @@ pub use client::Client;
 pub use error::ClientError;
 pub use session::{Encryption, Session, SessionMutator};
 pub use session_stats::{SessionStats, StatsDetails};
-pub use torrent::{Torrent, TorrentMutator, TorrentFiles, File, FileStat, TorrentPeers, TorrentTrackers};
+pub use torrent::{
+    File, FileStat, Torrent, TorrentFiles, TorrentMutator, TorrentPeers, TorrentTrackers,
+};
 
 use port_test::PortTest;
-use torrent::{TorrentAdded, TorrentList, TorrentFilesList, TorrentPeersList, TorrentTrackersList};
+use torrent::{TorrentAdded, TorrentFilesList, TorrentList, TorrentPeersList, TorrentTrackersList};

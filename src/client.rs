@@ -13,8 +13,9 @@ use crate::rpc::{
 };
 use crate::utils;
 use crate::{
-    Authentication, Session, SessionMutator, SessionStats, Torrent, TorrentFiles, TorrentPeers, TorrentTrackers, TorrentAdded, TorrentMutator,
-    TorrentList, TorrentFilesList, TorrentPeersList, TorrentTrackersList, PortTest
+    Authentication, PortTest, Session, SessionMutator, SessionStats, Torrent, TorrentAdded,
+    TorrentFiles, TorrentFilesList, TorrentList, TorrentMutator, TorrentPeers, TorrentPeersList,
+    TorrentTrackers, TorrentTrackersList,
 };
 
 #[derive(Debug, Clone)]
@@ -27,9 +28,10 @@ pub struct Client {
 
 impl Client {
     pub fn new(address: Url) -> Self {
-        let mut client = Self::default();
-        client.address = address;
-        client
+        Client {
+            address,
+            ..Default::default()
+        }
     }
 
     pub fn set_authentication(&self, auth: Option<Authentication>) {
@@ -37,43 +39,56 @@ impl Client {
     }
 
     pub async fn torrents(&self, ids: Option<Vec<i32>>) -> Result<Vec<Torrent>, ClientError> {
-        let mut args = TorrentGetArgs::default();
-        args.fields = utils::torrent_fields();
-        args.ids = ids;
-        let request_args = Some(RequestArgs::TorrentGetArgs(args));
+        let args = TorrentGetArgs {
+            fields: utils::torrent_fields(),
+            ids,
+        };
+        let request_args = Some(RequestArgs::TorrentGet(args));
 
         let response: RpcResponse<TorrentList> =
             self.send_request("torrent-get", request_args).await?;
         Ok(response.arguments.unwrap().torrents)
     }
 
-    pub async fn torrents_files(&self, ids: Option<Vec<i32>>) -> Result<Vec<TorrentFiles>, ClientError> {
-        let mut args = TorrentGetArgs::default();
-        args.fields = utils::torrent_files_fields();
-        args.ids = ids;
-        let request_args = Some(RequestArgs::TorrentGetArgs(args));
+    pub async fn torrents_files(
+        &self,
+        ids: Option<Vec<i32>>,
+    ) -> Result<Vec<TorrentFiles>, ClientError> {
+        let args = TorrentGetArgs {
+            fields: utils::torrent_files_fields(),
+            ids,
+        };
+        let request_args = Some(RequestArgs::TorrentGet(args));
 
         let response: RpcResponse<TorrentFilesList> =
             self.send_request("torrent-get", request_args).await?;
         Ok(response.arguments.unwrap().torrents)
     }
 
-    pub async fn torrents_peers(&self, ids: Option<Vec<i32>>) -> Result<Vec<TorrentPeers>, ClientError> {
-        let mut args = TorrentGetArgs::default();
-        args.fields = utils::torrent_peers_fields();
-        args.ids = ids;
-        let request_args = Some(RequestArgs::TorrentGetArgs(args));
+    pub async fn torrents_peers(
+        &self,
+        ids: Option<Vec<i32>>,
+    ) -> Result<Vec<TorrentPeers>, ClientError> {
+        let args = TorrentGetArgs {
+            fields: utils::torrent_peers_fields(),
+            ids,
+        };
+        let request_args = Some(RequestArgs::TorrentGet(args));
 
         let response: RpcResponse<TorrentPeersList> =
             self.send_request("torrent-get", request_args).await?;
         Ok(response.arguments.unwrap().torrents)
     }
 
-    pub async fn torrents_trackers(&self, ids: Option<Vec<i32>>) -> Result<Vec<TorrentTrackers>, ClientError> {
-        let mut args = TorrentGetArgs::default();
-        args.fields = utils::torrent_trackers_fields();
-        args.ids = ids;
-        let request_args = Some(RequestArgs::TorrentGetArgs(args));
+    pub async fn torrents_trackers(
+        &self,
+        ids: Option<Vec<i32>>,
+    ) -> Result<Vec<TorrentTrackers>, ClientError> {
+        let args = TorrentGetArgs {
+            fields: utils::torrent_trackers_fields(),
+            ids,
+        };
+        let request_args = Some(RequestArgs::TorrentGet(args));
 
         let response: RpcResponse<TorrentTrackersList> =
             self.send_request("torrent-get", request_args).await?;
@@ -86,7 +101,7 @@ impl Client {
         mutator: TorrentMutator,
     ) -> Result<(), ClientError> {
         let args = TorrentSetArgs { ids, mutator };
-        let request_args = Some(RequestArgs::TorrentSetArgs(args));
+        let request_args = Some(RequestArgs::TorrentSet(args));
 
         let _: RpcResponse<String> = self.send_request("torrent-set", request_args).await?;
         Ok(())
@@ -96,9 +111,11 @@ impl Client {
         &self,
         filename: &str,
     ) -> Result<Option<Torrent>, ClientError> {
-        let mut args = TorrentAddArgs::default();
-        args.filename = Some(filename.into());
-        let request_args = Some(RequestArgs::TorrentAddArgs(args));
+        let args = TorrentAddArgs {
+            filename: Some(filename.into()),
+            ..Default::default()
+        };
+        let request_args = Some(RequestArgs::TorrentAdd(args));
         self.torrent_add(request_args).await
     }
 
@@ -106,9 +123,11 @@ impl Client {
         &self,
         metainfo: &str,
     ) -> Result<Option<Torrent>, ClientError> {
-        let mut args = TorrentAddArgs::default();
-        args.metainfo = Some(metainfo.into());
-        let request_args = Some(RequestArgs::TorrentAddArgs(args));
+        let args = TorrentAddArgs {
+            metainfo: Some(metainfo.into()),
+            ..Default::default()
+        };
+        let request_args = Some(RequestArgs::TorrentAdd(args));
         self.torrent_add(request_args).await
     }
 
@@ -132,10 +151,11 @@ impl Client {
         ids: Option<Vec<String>>,
         delete_local_data: bool,
     ) -> Result<(), ClientError> {
-        let mut args = TorrentRemoveArgs::default();
-        args.delete_local_data = delete_local_data;
-        args.ids = ids;
-        let request_args = Some(RequestArgs::TorrentRemoveArgs(args));
+        let args = TorrentRemoveArgs {
+            ids,
+            delete_local_data,
+        };
+        let request_args = Some(RequestArgs::TorrentRemove(args));
 
         let _: RpcResponse<String> = self.send_request("torrent-remove", request_args).await?;
         Ok(())
@@ -146,9 +166,8 @@ impl Client {
         ids: Option<Vec<String>>,
         bypass_queue: bool,
     ) -> Result<(), ClientError> {
-        let mut args = TorrentActionArgs::default();
-        args.ids = ids;
-        let request_args = Some(RequestArgs::TorrentActionArgs(args));
+        let args = TorrentActionArgs { ids };
+        let request_args = Some(RequestArgs::TorrentAction(args));
 
         let method_name = if bypass_queue {
             "torrent-start-now"
@@ -181,11 +200,12 @@ impl Client {
         location: String,
         move_data: bool,
     ) -> Result<(), ClientError> {
-        let mut args = TorrentSetLocationArgs::default();
-        args.ids = ids;
-        args.location = location;
-        args.move_data = move_data;
-        let request_args = Some(RequestArgs::TorrentSetLocationArgs(args));
+        let args = TorrentSetLocationArgs {
+            ids,
+            location,
+            move_data,
+        };
+        let request_args = Some(RequestArgs::TorrentSetLocation(args));
 
         let _: RpcResponse<String> = self
             .send_request("torrent-set-location", request_args)
@@ -220,7 +240,7 @@ impl Client {
 
     pub async fn session_set(&self, mutator: SessionMutator) -> Result<(), ClientError> {
         let args = SessionSetArgs { mutator };
-        let request_args = Some(RequestArgs::SessionSetArgs(args));
+        let request_args = Some(RequestArgs::SessionSet(args));
 
         let _: RpcResponse<String> = self.send_request("session-set", request_args).await?;
         Ok(())
@@ -246,11 +266,10 @@ impl Client {
         action: &str,
         ids: Option<Vec<String>>,
     ) -> Result<(), ClientError> {
-        let mut args = TorrentActionArgs::default();
-        args.ids = ids;
-        let request_args = Some(RequestArgs::TorrentActionArgs(args));
+        let args = TorrentActionArgs { ids };
+        let request_args = Some(RequestArgs::TorrentAction(args));
 
-        let _: RpcResponse<String> = self.send_request(&action, request_args).await?;
+        let _: RpcResponse<String> = self.send_request(action, request_args).await?;
         Ok(())
     }
 

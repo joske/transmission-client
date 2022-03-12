@@ -9,13 +9,13 @@ pub struct RpcRequest {
 #[derive(Serialize, Debug, Clone)]
 #[serde(untagged)]
 pub enum RequestArgs {
-    TorrentGetArgs(TorrentGetArgs),
-    TorrentSetArgs(TorrentSetArgs),
-    TorrentAddArgs(TorrentAddArgs),
-    TorrentRemoveArgs(TorrentRemoveArgs),
-    TorrentActionArgs(TorrentActionArgs),
-    TorrentSetLocationArgs(TorrentSetLocationArgs),
-    SessionSetArgs(SessionSetArgs),
+    TorrentGet(TorrentGetArgs),
+    TorrentSet(TorrentSetArgs),
+    TorrentAdd(TorrentAddArgs),
+    TorrentRemove(TorrentRemoveArgs),
+    TorrentAction(TorrentActionArgs),
+    TorrentSetLocation(TorrentSetLocationArgs),
+    SessionSet(SessionSetArgs),
 }
 
 #[derive(Serialize, Debug, Clone, Default)]

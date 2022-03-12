@@ -136,7 +136,6 @@ pub struct TorrentAdded {
     pub torrent_duplicate: Option<Torrent>,
 }
 
-
 //
 // Torrent files
 //
@@ -175,7 +174,6 @@ pub struct FileStat {
     pub priority: i32,
 }
 
-
 //
 // Torrent peers
 //
@@ -202,7 +200,6 @@ pub struct TorrentPeersList {
     pub torrents: Vec<TorrentPeers>,
 }
 
-
 //
 // Torrent trackers
 //
@@ -220,7 +217,6 @@ pub struct TorrentTrackers {
 pub struct TorrentTrackersList {
     pub torrents: Vec<TorrentTrackers>,
 }
-
 
 impl RpcResponseArguments for Torrent {}
 impl RpcResponseArguments for TorrentList {}
