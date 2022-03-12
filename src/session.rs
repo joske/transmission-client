@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 use url::Url;
+use serde_with::{DefaultOnError, serde_as};
 
 use crate::rpc::RpcResponseArguments;
 
@@ -17,6 +18,7 @@ impl Default for Encryption {
     }
 }
 
+#[serde_as]
 #[derive(Deserialize, Serialize, Debug)]
 #[serde(rename_all = "kebab-case")]
 pub struct Session {
@@ -29,7 +31,9 @@ pub struct Session {
     pub alt_speed_up: i32,
     pub blocklist_enabled: bool,
     pub blocklist_size: i32,
-    pub blocklist_url: Url,
+    #[serde_as(deserialize_as = "DefaultOnError")]
+    #[serde(default)]
+    pub blocklist_url: Option<Url>,
     pub cache_size_mb: i32,
     pub config_dir: String,
     pub dht_enabled: bool,
