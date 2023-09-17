@@ -284,9 +284,12 @@ impl Client {
         };
 
         let body = serde_json::to_string(&request)?;
-        let result = self.send_post(body).await?;
+        let post_result = self.send_post(body).await?;
 
-        match serde_json::from_str::<RpcResponse<T>>(&result) {
+        let de = &mut serde_json::Deserializer::from_str(&post_result);
+        let serde_result: Result<RpcResponse<T>, _> = serde_path_to_error::deserialize(de);
+
+        match serde_result {
             Ok(response) => {
                 if response.result != "success" {
                     return Err(ClientError::TransmissionError(response.result));
@@ -295,10 +298,12 @@ impl Client {
                 Ok(response)
             }
             Err(err) => {
-                error!("Unable to parse json: {}", err.to_string());
-                warn!("JSON: {}", &result);
+                let path = err.path().to_string();
+                error!("Unable to parse json: {} ({})", path, err.to_string());
+                warn!("Path: {path}");
+                warn!("JSON: {post_result}");
 
-                Err(err.into())
+                Err(err.into_inner().into())
             }
         }
     }
