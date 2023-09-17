@@ -1,19 +1,19 @@
-use isahc::http::StatusCode;
-use isahc::{prelude::*, HttpClient, Request};
-use serde::de::DeserializeOwned;
-use url::Url;
-
 use std::cell::RefCell;
 use std::rc::Rc;
+
+use isahc::http::StatusCode;
+use isahc::prelude::*;
+use isahc::{HttpClient, Request};
+use serde::de::DeserializeOwned;
+use url::Url;
 
 use crate::error::ClientError;
 use crate::rpc::{
     RequestArgs, RpcRequest, RpcResponse, RpcResponseArguments, SessionSetArgs, TorrentActionArgs,
     TorrentAddArgs, TorrentGetArgs, TorrentRemoveArgs, TorrentSetArgs, TorrentSetLocationArgs,
 };
-use crate::utils;
 use crate::{
-    Authentication, PortTest, Session, SessionMutator, SessionStats, Torrent, TorrentAdded,
+    utils, Authentication, PortTest, Session, SessionMutator, SessionStats, Torrent, TorrentAdded,
     TorrentFiles, TorrentFilesList, TorrentList, TorrentMutator, TorrentPeers, TorrentPeersList,
     TorrentTrackers, TorrentTrackersList,
 };

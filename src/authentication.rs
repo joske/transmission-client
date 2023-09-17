@@ -11,6 +11,6 @@ impl Authentication {
         let config = Config::new(CharacterSet::Standard, false);
         let auth = format!("{}:{}", &self.username, &self.password);
 
-        format!("Basic {}=", encode_config(&auth, config))
+        format!("Basic {}=", encode_config(auth, config))
     }
 }

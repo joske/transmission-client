@@ -1,5 +1,4 @@
-use serde::de::DeserializeOwned;
-use serde::de::Error;
+use serde::de::{DeserializeOwned, Error};
 use serde::{Deserialize, Deserializer};
 use serde_json::Value;
 
@@ -13,7 +12,8 @@ pub struct RpcResponse<T: RpcResponseArguments + DeserializeOwned> {
 pub trait RpcResponseArguments {}
 impl RpcResponseArguments for String {}
 
-/// When the rpc response `arguments` field is empty, replace it with `None` instead of returning an error
+/// When the rpc response `arguments` field is empty, replace it with `None`
+/// instead of returning an error
 fn ok_or_none<'de, D, T>(deserializer: D) -> Result<Option<T>, D::Error>
 where
     D: Deserializer<'de>,

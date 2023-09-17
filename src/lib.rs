@@ -16,11 +16,10 @@ mod utils;
 pub use authentication::Authentication;
 pub use client::Client;
 pub use error::ClientError;
+use port_test::PortTest;
 pub use session::{Encryption, Session, SessionMutator};
 pub use session_stats::{SessionStats, StatsDetails};
 pub use torrent::{
     File, FileStat, Torrent, TorrentFiles, TorrentMutator, TorrentPeers, TorrentTrackers,
 };
-
-use port_test::PortTest;
 use torrent::{TorrentAdded, TorrentFilesList, TorrentList, TorrentPeersList, TorrentTrackersList};

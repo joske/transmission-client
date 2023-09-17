@@ -1,7 +1,6 @@
 use crate::rpc::RpcResponseArguments;
 use crate::utils::string_fallback;
 
-//
 // Default torrent struct
 //
 
@@ -136,7 +135,6 @@ pub struct TorrentAdded {
     pub torrent_duplicate: Option<Torrent>,
 }
 
-//
 // Torrent files
 //
 
@@ -174,7 +172,6 @@ pub struct FileStat {
     pub priority: i32,
 }
 
-//
 // Torrent peers
 //
 
@@ -200,7 +197,6 @@ pub struct TorrentPeersList {
     pub torrents: Vec<TorrentPeers>,
 }
 
-//
 // Torrent trackers
 //
 
