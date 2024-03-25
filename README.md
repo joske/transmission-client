@@ -1,6 +1,8 @@
 # transmission-client
 
-Rust wrapper for [Transmission rpc specs](https://github.com/transmission/transmission/blob/master/extras/rpc-spec.txt).
+Rust wrapper for [Transmission rpc specs](https://github.com/transmission/transmission/blob/main/docs/rpc-spec.md).
+
+This crate is primarily used by [transmission-gobject](https://crates.io/crates/transmission-gobject) and the GNOME app [Fragments](https://apps.gnome.org/Fragments/).
 
 ### Implemented method names
 
@@ -27,9 +29,12 @@ Rust wrapper for [Transmission rpc specs](https://github.com/transmission/transm
 - [x] session-get
 - [x] session-set
 - [x] session-stats
+- [ ] session-close
 
 #### Miscellaneous stuff
 - [ ] blocklist-update
 - [x] port-test
 - [x] session-close
 - [ ] free-space
+- [ ] group-set
+- [ ] group-get
