@@ -74,9 +74,9 @@ pub struct Session {
     pub seed_ratio_limited: bool,
     #[serde(default)]
     pub session_id: String,
-    pub speed_limit_down: i32,
+    pub speed_limit_down: f32,
     pub speed_limit_down_enabled: bool,
-    pub speed_limit_up: i32,
+    pub speed_limit_up: f32,
     pub speed_limit_up_enabled: bool,
     pub start_added_torrents: bool,
     pub trash_original_torrent_files: bool,
@@ -165,11 +165,11 @@ pub struct SessionMutator {
     #[serde(rename = "seedRatioLimited")]
     pub seed_ratio_limited: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub speed_limit_down: Option<i32>,
+    pub speed_limit_down: Option<f32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub speed_limit_down_enabled: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub speed_limit_up: Option<i32>,
+    pub speed_limit_up: Option<f32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub speed_limit_up_enabled: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
