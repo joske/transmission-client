@@ -42,7 +42,7 @@ pub struct TorrentAddArgs {
     pub peer_limit: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "bandwidthPriority")]
-    pub bandwith_priority: Option<i32>,
+    pub bandwidth_priority: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub files_wanted: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
