@@ -1,6 +1,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use isahc::auth::Credentials;
 use isahc::http::StatusCode;
 use isahc::prelude::*;
 use isahc::{HttpClient, Request};
@@ -343,7 +344,8 @@ impl Client {
         let request = if let Some(auth) = &*self.authentication.borrow() {
             Request::post(self.address.to_string())
                 .header("X-Transmission-Session-Id", session_id)
-                .header("Authorization", auth.base64_encoded())
+                .authentication(isahc::auth::Authentication::basic())
+                .credentials(Credentials::new(&auth.username, &auth.password))
                 .body(body)?
         } else {
             Request::post(self.address.to_string())
@@ -358,10 +360,7 @@ impl Client {
 impl Default for Client {
     fn default() -> Self {
         let address = Url::parse("http://127.0.0.1:9091/transmission/rpc/").unwrap();
-        let http_client = HttpClient::builder()
-            .authentication(isahc::auth::Authentication::all())
-            .build()
-            .unwrap();
+        let http_client = HttpClient::builder().build().unwrap();
         let session_id = Rc::new(RefCell::new("0".into()));
 
         Self {

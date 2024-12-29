@@ -21,4 +21,3 @@ url = { version = "2.5", features = ["serde"] }
 log = "0.4"
 isahc = "1.7"
 thiserror = "1.0"
-base64 = "0.22"
