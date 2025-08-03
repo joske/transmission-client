@@ -13,9 +13,9 @@ use crate::rpc::{
     TorrentAddArgs, TorrentGetArgs, TorrentRemoveArgs, TorrentSetArgs, TorrentSetLocationArgs,
 };
 use crate::{
-    utils, Authentication, PortTest, Session, SessionMutator, SessionStats, Torrent, TorrentAdded,
+    Authentication, PortTest, Session, SessionMutator, SessionStats, Torrent, TorrentAdded,
     TorrentFiles, TorrentFilesList, TorrentList, TorrentMutator, TorrentPeers, TorrentPeersList,
-    TorrentTrackers, TorrentTrackersList,
+    TorrentTrackers, TorrentTrackersList, utils,
 };
 
 #[derive(Debug, Clone)]
@@ -299,7 +299,7 @@ impl Client {
             }
             Err(err) => {
                 let path = err.path().to_string();
-                error!("Unable to parse json: {} ({})", path, err.to_string());
+                error!("Unable to parse json: {path} ({err})");
                 warn!("Path: {path}");
                 warn!("JSON: {post_result}");
 

@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use serde_with::{serde_as, DefaultOnError};
+use serde_with::{DefaultOnError, serde_as};
 use url::Url;
 
 use crate::rpc::RpcResponseArguments;
