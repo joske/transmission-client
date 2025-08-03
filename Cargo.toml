@@ -1,23 +1,23 @@
 [package]
 name = "transmission-client"
 version = "0.1.5"
-authors = ["Felix Häcker <haeckerfelix@gnome.org>"]
+authors = [ "Felix Häcker <haeckerfelix@gnome.org>" ]
 edition = "2021"
 description = "Rust wrapper for Transmission rpc specs"
-keywords = ["transmission", "torrent", "bittorrent", "rpc", "download"]
-categories = ["api-bindings"]
+keywords = [ "transmission", "torrent", "bittorrent", "rpc", "download" ]
+categories = [ "api-bindings" ]
 license = "MIT"
 documentation = "https://docs.rs/transmission-client"
 homepage = "https://gitlab.gnome.org/haecker-felix/transmission-client"
 repository = "https://gitlab.gnome.org/haecker-felix/transmission-client"
 
 [dependencies]
-serde = "1.0"
-serde_json = "1.0"
-serde_derive = "1.0"
-serde_with = "3.7"
-serde_path_to_error = "0.1"
-url = { version = "2.5", features = ["serde"] }
 log = "0.4"
-isahc = "1.7"
+reqwest = "0.12"
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"
+serde_path_to_error = "0.1"
+serde_with = "3.7"
 thiserror = "1.0"
+url = { version = "2.5", features = [ "serde" ] }

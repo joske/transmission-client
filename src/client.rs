@@ -1,10 +1,9 @@
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::time::Duration;
 
-use isahc::auth::Credentials;
-use isahc::http::StatusCode;
-use isahc::prelude::*;
-use isahc::{HttpClient, Request};
+use reqwest::header::{self, HeaderMap};
+use reqwest::{RequestBuilder, StatusCode};
 use serde::de::DeserializeOwned;
 use url::Url;
 
@@ -23,7 +22,7 @@ use crate::{
 pub struct Client {
     address: Url,
     authentication: Rc<RefCell<Option<Authentication>>>,
-    http_client: HttpClient,
+    http_client: reqwest::Client,
     session_id: Rc<RefCell<String>>,
 }
 
@@ -311,7 +310,7 @@ impl Client {
 
     async fn send_post(&self, body: String) -> Result<String, ClientError> {
         let request = self.http_request(body.clone())?;
-        let mut response = self.http_client.send_async(request).await?;
+        let mut response = request.send().await?;
 
         // Update session id
         let headers = response.headers();
@@ -326,7 +325,7 @@ impl Client {
             StatusCode::CONFLICT => {
                 debug!("Received status code 409, resend request.");
                 let request = self.http_request(body.clone())?;
-                response = self.http_client.send_async(request).await?;
+                response = request.send().await?;
             }
             // Authentication needed
             StatusCode::UNAUTHORIZED => {
@@ -338,19 +337,20 @@ impl Client {
         Ok(response.text().await.unwrap())
     }
 
-    fn http_request(&self, body: String) -> Result<Request<String>, ClientError> {
+    fn http_request(&self, body: String) -> Result<RequestBuilder, ClientError> {
         let session_id = self.session_id.borrow().clone();
 
         let request = if let Some(auth) = &*self.authentication.borrow() {
-            Request::post(self.address.to_string())
+            self.http_client
+                .post(self.address.clone())
                 .header("X-Transmission-Session-Id", session_id)
-                .authentication(isahc::auth::Authentication::basic())
-                .credentials(Credentials::new(&auth.username, &auth.password))
-                .body(body)?
+                .basic_auth(&auth.username, Some(&auth.password))
+                .body(body)
         } else {
-            Request::post(self.address.to_string())
+            self.http_client
+                .post(self.address.clone())
                 .header("X-Transmission-Session-Id", session_id)
-                .body(body)?
+                .body(body)
         };
 
         Ok(request)
@@ -360,7 +360,19 @@ impl Client {
 impl Default for Client {
     fn default() -> Self {
         let address = Url::parse("http://127.0.0.1:9091/transmission/rpc/").unwrap();
-        let http_client = HttpClient::builder().build().unwrap();
+
+        let mut headers = HeaderMap::new();
+        headers.insert(
+            "content-type",
+            header::HeaderValue::from_static("application/json"),
+        );
+
+        let http_client = reqwest::ClientBuilder::new()
+            .default_headers(headers)
+            .timeout(Duration::from_secs(15))
+            .build()
+            .unwrap();
+
         let session_id = Rc::new(RefCell::new("0".into()));
 
         Self {
