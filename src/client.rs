@@ -119,6 +119,20 @@ impl Client {
         self.torrent_add(request_args).await
     }
 
+    pub async fn torrent_add_filename_download_dir(
+        &self,
+        filename: &str,
+        download_dir: &str,
+    ) -> Result<Option<Torrent>, ClientError> {
+        let args = TorrentAddArgs {
+            filename: Some(filename.into()),
+            download_dir: Some(download_dir.into()),
+            ..Default::default()
+        };
+        let request_args = Some(RequestArgs::TorrentAdd(args));
+        self.torrent_add(request_args).await
+    }
+
     pub async fn torrent_add_metainfo(
         &self,
         metainfo: &str,
